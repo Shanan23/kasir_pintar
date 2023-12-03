@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "873742343575",
+    "project_id": "kasirpintar-5aaf5",
+    "storage_bucket": "kasirpintar-5aaf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873742343575:android:777e69954a0e531bf5f8d2",
+        "android_client_info": {
+          "package_name": "id.dimas.kasirpintar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcuAzLUjh0MEen5AKmmEMGVulBkWAk-QM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
