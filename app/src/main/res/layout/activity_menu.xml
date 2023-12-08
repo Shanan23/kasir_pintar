@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".module.menu.MenuActivity">
 
+    <include layout="@layout/actionbar_menu" android:id="@+id/s"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

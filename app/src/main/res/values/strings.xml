@@ -6,6 +6,9 @@
     <string name="show_password">Show Password</string>
     <string name="title_activity_success_dialog">SuccessDialog</string>
     <string name="check_email">Silakan cek email Anda untuk melakukan verifikasi.</string>
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="double_back">Tekan kembali lagi untuk keluar</string>
+    <string name="login">Login</string>
+    <string name="name">Nama Lengkap</string>
+    <string name="retry_email">Kirim ulang email ke \n%1$s</string>
 </resources>
