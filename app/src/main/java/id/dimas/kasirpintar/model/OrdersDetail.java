@@ -5,8 +5,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity
-public class OrdersDetail {
+public class OrdersDetail implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
     @ColumnInfo(name = "order_id")
@@ -30,7 +32,6 @@ public class OrdersDetail {
 
     @Ignore
     public Products products;
-
 
     public String getItemId() {
         return itemId;

@@ -3,14 +3,23 @@ package id.dimas.kasirpintar.model;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
+
 @Entity
-public class Orders {
+public class Orders implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
     @ColumnInfo(name = "customer_id")
-    public int customerId;
+    public String customerId;
     @ColumnInfo(name = "amount")
     public int amount;
+    @ColumnInfo(name = "pay_amount")
+    public int payAmount;
+    @ColumnInfo(name = "different")
+    public int different;
+    @ColumnInfo(name = "profit")
+    public int profit;
     @ColumnInfo(name = "order_date")
     public String orderDate;
     @ColumnInfo(name = "order_status")
@@ -21,6 +30,30 @@ public class Orders {
     public String createdAt;
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
+
+    public int getPayAmount() {
+        return payAmount;
+    }
+
+    public void setPayAmount(int payAmount) {
+        this.payAmount = payAmount;
+    }
+
+    public int getDifferent() {
+        return different;
+    }
+
+    public void setDifferent(int different) {
+        this.different = different;
+    }
+
+    public int getProfit() {
+        return profit;
+    }
+
+    public void setProfit(int profit) {
+        this.profit = profit;
+    }
 
     public String getPaidAt() {
         return paidAt;
@@ -38,11 +71,11 @@ public class Orders {
         this.id = id;
     }
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 

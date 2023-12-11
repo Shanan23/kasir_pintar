@@ -89,6 +89,9 @@ public class HomeActivity extends AppCompatActivity {
         if (!sharedPreferenceHelper.isSavedPin()) {
             showDialogPin();
         }
+        if (MyApp.getPrintHelper().selectedDevice == null) {
+            MyApp.getPrintHelper().browseBluetoothDevice(mContext);
+        }
 
         ivProduct.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProductActivity.class);

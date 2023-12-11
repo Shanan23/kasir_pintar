@@ -156,6 +156,8 @@ public class ProductDetailActivity extends AppCompatActivity {
 
 
         ivAddProduct.setOnClickListener(v -> {
+            addCategory.performClick();
+
             int stock = 0;
             if (etProductName.getText().toString().isEmpty()) {
                 etProductName.setError("Nama Produk tidak boleh kosong");

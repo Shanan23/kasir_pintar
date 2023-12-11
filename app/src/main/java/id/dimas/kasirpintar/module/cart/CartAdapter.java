@@ -117,8 +117,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     OrdersDetail existingOrderDetail = orderDetails.get(existingPosition);
                     int updatedQty = existingOrderDetail.getQty() + 1;
                     cartList.get(position).setQty(updatedQty);
-
                     existingOrderDetail.setQty(updatedQty);
+                    existingOrderDetail.setTotalDetails(updatedQty * Integer.parseInt(existingOrderDetail.getProducts().getSellPrice()));
                     orderDetails.set(existingPosition, existingOrderDetail);
                     notifyItemChanged(position);
                 } else {
@@ -127,6 +127,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     currentProduct.setQty(1);
                     cartList.get(position).setQty(1);
                     newOrderDetail.setProducts(currentProduct);
+                    newOrderDetail.setItemId(String.valueOf(currentProduct.getId()));
+                    newOrderDetail.setName(currentProduct.getName());
+                    newOrderDetail.setTotalDetails(1 * Integer.parseInt(currentProduct.getSellPrice()));
                     newOrderDetail.setQty(1);
                     // Initial quantity is 1
                     orderDetails.add(newOrderDetail);

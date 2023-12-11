@@ -28,6 +28,8 @@ public class PinDialog {
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
+        builder
+                .setCancelable(false);
         builder.create().show();
     }
 }

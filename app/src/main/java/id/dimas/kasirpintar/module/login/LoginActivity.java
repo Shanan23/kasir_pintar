@@ -29,6 +29,7 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.HashUtils;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.menu.HomeActivity;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
     private String email;
     private String password;
+    private String pin;
 
     private Toolbar toolbar;
     private CardView cvBack;
@@ -49,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText etEmail;
     private TextInputLayout tilPassword;
     private TextInputEditText etPassword;
+    private TextInputEditText etPin;
     private CheckBox showPasswordCheckbox;
     private FailedDialog failedDialog;
     private Context mContext;
@@ -69,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         tilPassword = findViewById(R.id.tilPassword);
         etPassword = findViewById(R.id.etPassword);
+        etPin = findViewById(R.id.etPin);
         showPasswordCheckbox = findViewById(R.id.showPasswordCheckbox);
         cvLogin = findViewById(R.id.cvLogin);
 
@@ -89,9 +93,11 @@ public class LoginActivity extends AppCompatActivity {
             if (isChecked) {
                 // Show Password
                 etPassword.setTransformationMethod(null);
+                etPin.setTransformationMethod(null);
             } else {
                 // Hide Password
                 etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                etPin.setTransformationMethod(new PasswordTransformationMethod());
             }
         });
 
@@ -110,9 +116,14 @@ public class LoginActivity extends AppCompatActivity {
                 etPassword.setError("Password tidak boleh kosong");
                 return;
             }
+            if (etPin.getText().toString().isEmpty()) {
+                etPin.setError("Pin tidak boleh kosong");
+                return;
+            }
 
             email = etEmail.getText().toString();
             password = etPassword.getText().toString();
+            pin = etPin.getText().toString();
             doSignIn();
         });
     }
@@ -146,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             users.setId(user.getUid());
                             users.setActive(true);
+                            users.setPin(HashUtils.hashPassword(pin));
                             users.setEmail(user.getEmail());
                             users.setName(user.getDisplayName());
                             appDatabase.usersDao().upsertUsers(users);
