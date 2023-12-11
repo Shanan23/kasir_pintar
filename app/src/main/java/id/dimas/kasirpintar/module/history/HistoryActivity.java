@@ -80,7 +80,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 2; // Number of tabs
+            return 4; // Number of tabs
         }
 
         @Override

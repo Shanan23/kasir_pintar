@@ -71,6 +71,25 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="@string/pin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilPassword">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword"
+            android:textColor="@color/md_theme_dark_background" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <CheckBox
         android:id="@+id/showPasswordCheckbox"
@@ -80,11 +99,11 @@
         android:text="@string/show_password"
         android:textColor="@color/md_theme_dark_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/tilPin" />
 
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cvDaftar"
+        android:id="@+id/cvChangePassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -120,6 +139,6 @@
         android:text="@string/verification"
         android:textColor="@color/md_theme_dark_background"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/cvDaftar" />
+        app:layout_constraintTop_toBottomOf="@id/cvChangePassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

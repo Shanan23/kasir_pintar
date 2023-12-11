@@ -86,7 +86,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             decimalFormat = new DecimalFormat("#,###.##");
             this.context = context;
             this.itemClickListener = listener;
-
         }
 
         void bind(Products product) {

@@ -11,4 +11,5 @@
     <string name="login">Login</string>
     <string name="name">Nama Lengkap</string>
     <string name="retry_email">Kirim ulang email ke \n%1$s</string>
+    <string name="pin">Pin</string>
 </resources>

@@ -33,7 +33,7 @@ public class SuccessDialog extends Dialog {
 
         // Customize the dialog components
         ImageView successIcon = findViewById(R.id.successIcon);
-        TextView successTitle = findViewById(R.id.successTitle);
+        TextView successTitle = findViewById(R.id.pinTitle);
         TextView successMessage = findViewById(R.id.successMessage);
         CardView cvOk = findViewById(R.id.cvOk);
 

@@ -11,10 +11,14 @@ public class OrdersDetail {
     public int id;
     @ColumnInfo(name = "order_id")
     public int ordersId;
+    @ColumnInfo(name = "item_id")
+    public String itemId;
     @ColumnInfo(name = "name")
     public String name;
     @ColumnInfo(name = "qty")
     public int qty;
+    @ColumnInfo(name = "total_details")
+    public int totalDetails;
     @ColumnInfo(name = "order_date")
     public String orderDate;
     @ColumnInfo(name = "order_status")
@@ -26,6 +30,23 @@ public class OrdersDetail {
 
     @Ignore
     public Products products;
+
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    public int getTotalDetails() {
+        return totalDetails;
+    }
+
+    public void setTotalDetails(int totalDetails) {
+        this.totalDetails = totalDetails;
+    }
 
     public Products getProducts() {
         return products;

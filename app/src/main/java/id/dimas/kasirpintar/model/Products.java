@@ -36,9 +36,10 @@ public class Products implements Serializable {
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
     @Ignore
-    public int qty;
+    public int qty = 0;
 
     public int getQty() {
+
         return qty;
     }
 

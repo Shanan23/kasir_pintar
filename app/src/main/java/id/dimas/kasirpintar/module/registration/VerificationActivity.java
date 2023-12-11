@@ -68,7 +68,7 @@ public class VerificationActivity extends AppCompatActivity {
         tvLeftTitle = (TextView) findViewById(R.id.tvLeftTitle);
         tvRightTitle = (TextView) findViewById(R.id.tvRightTitle);
 
-        tvLeftTitle.setText(getString(R.string.verification));
+        tvLeftTitle.setText("Verifikasi Email");
         tvRightTitle.setVisibility(View.INVISIBLE);
         mContext = this;
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);

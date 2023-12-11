@@ -14,7 +14,7 @@
         android:layout_height="64dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="Success Icon"
-        android:src="@drawable/ic_success"
+        android:src="@drawable/ic_security"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,24 +25,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="Success!"
+        android:text="Masukkan pin Anda"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/successIcon" />
 
-    <TextView
-        android:id="@+id/successMessage"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/etPin"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:text="Your message goes here."
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="10dp"
+        android:inputType="numberPassword"
         app:layout_constraintTop_toBottomOf="@id/pinTitle" />
 
     <androidx.cardview.widget.CardView
@@ -55,7 +50,7 @@
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/successMessage">
+        app:layout_constraintTop_toBottomOf="@id/etPin">
 
         <TextView
             android:layout_width="match_parent"

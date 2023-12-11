@@ -20,9 +20,12 @@ public interface UsersDao {
     @Query("SELECT * FROM Users")
     List<Users> getAllUsers();
 
-    @Query("SELECT * FROM Users WHERE id = :uid")
+    @Query("SELECT * FROM Users WHERE id = :uid LIMIT 1")
     Users getUserById(String uid);
 
-    @Query("SELECT * FROM Users WHERE email = :email")
+    @Query("SELECT * FROM Users WHERE email = :email LIMIT 1")
     Users getUserByEmail(String email);
+
+    @Query("SELECT * FROM Users WHERE email = :email AND pin = :pin LIMIT 1")
+    Users getUserByPin(String email, String pin);
 }

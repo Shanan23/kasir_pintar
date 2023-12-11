@@ -34,6 +34,7 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.HashUtils;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.login.LoginActivity;
 
@@ -42,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String email;
     private String password;
+    private String pin;
     private String name;
     private final String TAG = "RegisterActivity";
 
@@ -51,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText etEmail;
     private TextInputEditText etName;
     private TextInputEditText etPassword;
+    private TextInputEditText etPin;
     private CardView cvDaftar;
     private Context mContext;
     private CheckBox showPasswordCheckbox;
@@ -72,7 +75,8 @@ public class RegisterActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
-        cvDaftar = findViewById(R.id.cvDaftar);
+        etPin = findViewById(R.id.etPin);
+        cvDaftar = findViewById(R.id.cvChangePassword);
         showPasswordCheckbox = findViewById(R.id.showPasswordCheckbox);
 
         setSupportActionBar(toolbar);
@@ -91,9 +95,11 @@ public class RegisterActivity extends AppCompatActivity {
             if (isChecked) {
                 // Show Password
                 etPassword.setTransformationMethod(null);
+                etPin.setTransformationMethod(null);
             } else {
                 // Hide Password
                 etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                etPin.setTransformationMethod(new PasswordTransformationMethod());
             }
         });
 
@@ -119,10 +125,15 @@ public class RegisterActivity extends AppCompatActivity {
                 etPassword.setError("Password tidak boleh kosong");
                 return;
             }
+            if (etPin.getText().toString().isEmpty()) {
+                etPin.setError("Pin tidak boleh kosong");
+                return;
+            }
 
             email = etEmail.getText().toString();
             name = etName.getText().toString();
             password = etPassword.getText().toString();
+            pin = HashUtils.hashPassword(etPin.getText().toString());
             doRegis();
         });
     }
@@ -139,6 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
                     users = new Users();
                     users.id = user.getUid();
                     users.email = email;
+                    users.pin = pin;
                     users.isActive = user.isEmailVerified();
                     users.createdAt = new Date().toString();
 

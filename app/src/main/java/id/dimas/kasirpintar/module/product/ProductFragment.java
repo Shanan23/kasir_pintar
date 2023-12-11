@@ -117,7 +117,6 @@ public class ProductFragment extends Fragment {
         clearButton = view.findViewById(R.id.clearButton);
         ivAddProduct = view.findViewById(R.id.ivAddProduct);
 
-
         // Set up the clear button click listener
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override

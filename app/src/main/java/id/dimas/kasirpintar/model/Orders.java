@@ -15,10 +15,20 @@ public class Orders {
     public String orderDate;
     @ColumnInfo(name = "order_status")
     public String orderStatus;
+    @ColumnInfo(name = "paid_at")
+    public String paidAt;
     @ColumnInfo(name = "created_at")
     public String createdAt;
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
+
+    public String getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(String paidAt) {
+        this.paidAt = paidAt;
+    }
 
     public int getId() {
         return id;
