@@ -13,8 +13,15 @@ import id.dimas.kasirpintar.model.Categories;
 public interface CategoriesDao {
     @Insert
     long insertCategories(Categories categories);
+
     @Upsert
     long upsertCategories(Categories categories);
+
     @Query("SELECT * FROM Categories")
     List<Categories> getAllCategories();
+
+    @Query("SELECT name FROM Categories")
+    List<String> getAllCategoriesName();
+
+
 }

@@ -22,4 +22,7 @@ public interface UsersDao {
 
     @Query("SELECT * FROM Users WHERE id = :uid")
     Users getUserById(String uid);
+
+    @Query("SELECT * FROM Users WHERE email = :email")
+    Users getUserByEmail(String email);
 }

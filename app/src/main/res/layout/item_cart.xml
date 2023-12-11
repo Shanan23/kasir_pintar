@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/md_theme_light_background"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <ImageView
+            android:id="@+id/ivProduct"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/v1"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="@color/md_theme_dark_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivProduct"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/app_name"
+            android:textColor="@color/md_theme_dark_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/v2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/md_theme_dark_primary"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toBottomOf="@id/tvItemName" />
+
+        <ImageView
+            android:id="@+id/lblCalendar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_calendar"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toBottomOf="@id/v2" />
+
+        <TextView
+            android:id="@+id/contentCalendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/md_theme_dark_primary"
+            app:layout_constraintBottom_toTopOf="@id/lblQty"
+            app:layout_constraintStart_toEndOf="@id/lblCalendar"
+            app:layout_constraintTop_toBottomOf="@id/v2" />
+
+        <TextView
+            android:id="@+id/lblQty"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Jumlah Pesanan"
+            android:textColor="@color/md_theme_dark_primary"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toBottomOf="@id/lblCalendar" />
+
+        <TextView
+            android:id="@+id/contentQty"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text=": xxx"
+            android:textColor="@color/md_theme_dark_primary"
+            app:layout_constraintStart_toEndOf="@id/lblQty"
+            app:layout_constraintTop_toBottomOf="@id/lblCalendar" />
+
+        <TextView
+            android:id="@+id/lblTotal"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Total Harga : "
+            android:textColor="@color/md_theme_dark_primary"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toBottomOf="@id/lblQty" />
+
+        <TextView
+            android:id="@+id/contentTotal"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Rp xxx"
+            android:textColor="@color/md_theme_dark_primary"
+            app:layout_constraintStart_toEndOf="@id/v1"
+            app:layout_constraintTop_toBottomOf="@id/lblTotal" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

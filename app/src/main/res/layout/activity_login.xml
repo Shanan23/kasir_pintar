@@ -20,15 +20,16 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/email"
-        app:layout_constraintTop_toBottomOf="@id/action_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:textColor="@color/md_theme_dark_background"
             android:textColorHighlight="@color/md_theme_dark_primary" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -47,8 +48,9 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:textColor="@color/md_theme_dark_background"
             android:textColorHighlight="@color/md_theme_dark_primary" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -59,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:text="@string/show_password"
+        android:textColor="@color/md_theme_dark_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
 
@@ -74,13 +77,13 @@
         app:layout_constraintTop_toBottomOf="@id/showPasswordCheckbox">
 
         <TextView
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:text="@string/login"
             android:textColor="@color/md_theme_light_background"
             android:textSize="14sp" />

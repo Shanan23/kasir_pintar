@@ -2,6 +2,7 @@ package id.dimas.kasirpintar.module.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -28,7 +29,9 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
-import id.dimas.kasirpintar.module.menu.MenuActivity;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
+import id.dimas.kasirpintar.model.Users;
+import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
     private String email;
     private String password;
-
 
     private Toolbar toolbar;
     private CardView cvBack;
@@ -52,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     private Context mContext;
     private SuccessDialog successDialog;
     private AppDatabase appDatabase;
+    SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -130,17 +134,39 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "signInWithEmail:emailVerified : " + emailVerified);
 
                         String uid = user.getUid();
-                        successDialog = new SuccessDialog(mContext, "Login Berhasil", "", new SuccessDialog.SuccessCallback() {
-                            @Override
-                            public void onClick() {
-                                Intent intent = new Intent(mContext, MenuActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+
+                        sharedPreferenceHelper.setLoggedIn(true);
+                        sharedPreferenceHelper.setIsSavedPin(false);
+                        sharedPreferenceHelper.saveUsername(user.getEmail());
+
+                        new Thread(() -> {
+                            Users users = appDatabase.usersDao().getUserById(user.getUid());
+                            if (users == null) {
+                                users = new Users();
                             }
-                        });
-                        successDialog.show();
+                            users.setId(user.getUid());
+                            users.setActive(true);
+                            users.setEmail(user.getEmail());
+                            users.setName(user.getDisplayName());
+                            appDatabase.usersDao().upsertUsers(users);
+                        }).start();
+
+                        try {
+                            successDialog = new SuccessDialog(mContext, "Login Berhasil", "", new SuccessDialog.SuccessCallback() {
+                                @Override
+                                public void onClick() {
+                                    Intent intent = new Intent(mContext, HomeActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+                            });
+                            successDialog.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     } else {
                         failedDialog = new FailedDialog(mContext, "Login Gagal", "Mohon untuk melakukan verifikasi email terlebih dahulu");
 

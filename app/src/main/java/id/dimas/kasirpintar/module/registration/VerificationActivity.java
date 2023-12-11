@@ -25,8 +25,9 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Users;
-import id.dimas.kasirpintar.module.menu.MenuActivity;
+import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class VerificationActivity extends AppCompatActivity {
 
@@ -48,6 +49,7 @@ public class VerificationActivity extends AppCompatActivity {
     private CardView cvBack;
     private TextView tvLeftTitle;
     private TextView tvRightTitle;
+    SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class VerificationActivity extends AppCompatActivity {
         tvLeftTitle.setText(getString(R.string.verification));
         tvRightTitle.setVisibility(View.INVISIBLE);
         mContext = this;
+        sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
         mAuth = FirebaseAuth.getInstance();
         appDatabase = MyApp.getAppDatabase();
         mUser = mAuth.getCurrentUser();
@@ -92,8 +95,24 @@ public class VerificationActivity extends AppCompatActivity {
                         boolean isEmailVerified = mUser.isEmailVerified();
                         Log.d(TAG, String.format("isEmailVerified:%s", isEmailVerified));
 
+                        sharedPreferenceHelper.setLoggedIn(true);
+                        sharedPreferenceHelper.setIsSavedPin(false);
+                        sharedPreferenceHelper.saveUsername(mUser.getEmail());
+
+                        new Thread(() -> {
+                            Users users = appDatabase.usersDao().getUserById(mUser.getUid());
+                            if (users == null) {
+                                users = new Users();
+                            }
+                            users.setId(mUser.getUid());
+                            users.setActive(true);
+                            users.setEmail(mUser.getEmail());
+                            users.setName(mUser.getDisplayName());
+                            appDatabase.usersDao().upsertUsers(users);
+                        }).start();
+
                         if (isEmailVerified) {
-                            Intent intent = new Intent(mContext, MenuActivity.class);
+                            Intent intent = new Intent(mContext, HomeActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

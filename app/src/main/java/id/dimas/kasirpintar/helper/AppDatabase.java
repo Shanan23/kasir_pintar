@@ -19,13 +19,18 @@ import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Users;
 
-@Database(entities = {Users.class, Categories.class, Customers.class, Orders.class, OrdersDetail.class, Products.class}, version = 1, exportSchema = false)
+@Database(entities = {Users.class, Categories.class, Customers.class, Orders.class, OrdersDetail.class, Products.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract CategoriesDao categoriesDao();
+
     public abstract CustomersDao customersDao();
+
     public abstract OrdersDao ordersDao();
+
     public abstract OrdersDetailDao ordersDetailDao();
+
     public abstract ProductsDao productsDao();
+
     public abstract UsersDao usersDao();
 
     private static volatile AppDatabase INSTANCE;
@@ -34,7 +39,8 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "kasir_pintar_database.db").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "kasir_pintar_database.db")
+                            .fallbackToDestructiveMigration().build();
                 }
             }
         }

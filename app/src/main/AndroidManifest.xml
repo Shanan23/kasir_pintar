@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -11,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+        <activity
+            android:name=".module.product.ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".module.cart.CartActivity"
+            android:exported="false" />
         <activity
             android:name=".module.registration.VerificationActivity"
             android:exported="false" />
@@ -33,7 +41,7 @@
             android:name=".module.registration.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".module.menu.MenuActivity"
+            android:name=".module.menu.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".module.login.LoginActivity"

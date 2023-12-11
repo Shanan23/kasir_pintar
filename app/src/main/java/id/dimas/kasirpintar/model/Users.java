@@ -29,4 +29,84 @@ public class Users {
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
 
+    @NonNull
+    public String getId() {
+        return id;
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isCustomer() {
+        return isCustomer;
+    }
+
+    public void setCustomer(boolean customer) {
+        isCustomer = customer;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public boolean isVerificationSend() {
+        return isVerificationSend;
+    }
+
+    public void setVerificationSend(boolean verificationSend) {
+        isVerificationSend = verificationSend;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(String deletedAt) {
+        this.deletedAt = deletedAt;
+    }
 }
