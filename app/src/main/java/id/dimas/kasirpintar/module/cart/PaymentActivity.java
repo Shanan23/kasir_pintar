@@ -1,13 +1,14 @@
 package id.dimas.kasirpintar.module.cart;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -23,7 +24,6 @@ import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
-import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class PaymentActivity extends AppCompatActivity {
@@ -67,6 +67,11 @@ public class PaymentActivity extends AppCompatActivity {
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
+
+
+        cvBack.setOnClickListener(v -> finish());
+        tvLeftTitle.setText("Pembayaran");
+        tvRightTitle.setVisibility(View.GONE);
 
         Date currentDate = new Date();
 

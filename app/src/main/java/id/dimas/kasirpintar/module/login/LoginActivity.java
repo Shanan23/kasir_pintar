@@ -2,7 +2,6 @@ package id.dimas.kasirpintar.module.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -154,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                             Users users = appDatabase.usersDao().getUserById(user.getUid());
                             if (users == null) {
                                 users = new Users();
+                                users.setAdmin(true);
                             }
                             users.setId(user.getUid());
                             users.setActive(true);
