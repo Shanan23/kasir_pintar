@@ -2,24 +2,28 @@ package id.dimas.kasirpintar.helper;
 
 import android.content.Context;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import id.dimas.kasirpintar.helper.dao.CategoriesDao;
 import id.dimas.kasirpintar.helper.dao.BuyDao;
+import id.dimas.kasirpintar.helper.dao.CategoriesDao;
 import id.dimas.kasirpintar.helper.dao.OrdersDao;
 import id.dimas.kasirpintar.helper.dao.OrdersDetailDao;
 import id.dimas.kasirpintar.helper.dao.ProductsDao;
 import id.dimas.kasirpintar.helper.dao.UsersDao;
-import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Buy;
+import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Users;
 
-@Database(entities = {Users.class, Categories.class, Buy.class, Orders.class, OrdersDetail.class, Products.class}, version = 2, exportSchema = false)
+@Database(entities = {Users.class, Categories.class, Buy.class, Orders.class, OrdersDetail.class, Products.class}, version = 3,
+        autoMigrations = {
+        @AutoMigration(from = 2, to = 3)
+}, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract CategoriesDao categoriesDao();
 

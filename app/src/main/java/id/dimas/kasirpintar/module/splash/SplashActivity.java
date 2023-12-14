@@ -70,6 +70,10 @@ public class SplashActivity extends AppCompatActivity {
         void onPermissionsGranted();
     }
 
+    public interface OnStoragePermissionsGranted {
+        void onPermissionsGranted();
+    }
+
     public static final int PERMISSION_BLUETOOTH = 1;
     public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
     public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
@@ -77,6 +81,7 @@ public class SplashActivity extends AppCompatActivity {
     public static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 5;
 
     public OnBluetoothPermissionsGranted onBluetoothPermissionsGranted;
+    public OnStoragePermissionsGranted onStoragePermissionsGranted;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -87,8 +92,10 @@ public class SplashActivity extends AppCompatActivity {
                 case PERMISSION_BLUETOOTH_ADMIN:
                 case PERMISSION_BLUETOOTH_CONNECT:
                 case PERMISSION_BLUETOOTH_SCAN:
-                case PERMISSION_WRITE_EXTERNAL_STORAGE:
                     this.checkBluetoothPermissions(this.onBluetoothPermissionsGranted);
+                    break;
+                case PERMISSION_WRITE_EXTERNAL_STORAGE:
+                    this.checkStoragePermissions(this.onStoragePermissionsGranted);
                     break;
             }
         }
@@ -106,6 +113,16 @@ public class SplashActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
         } else {
             this.onBluetoothPermissionsGranted.onPermissionsGranted();
+        }
+    }
+
+    public void checkStoragePermissions(OnStoragePermissionsGranted onStoragePermissionsGranted) {
+        this.onStoragePermissionsGranted = onStoragePermissionsGranted;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
+        } else {
+            this.onStoragePermissionsGranted.onPermissionsGranted();
         }
     }
 }
