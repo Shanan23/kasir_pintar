@@ -19,7 +19,7 @@ import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Users;
 
-@Database(entities = {Users.class, Categories.class, Customers.class, Orders.class, OrdersDetail.class, Products.class}, version = 2, exportSchema = false)
+@Database(entities = {Users.class, Categories.class, Customers.class, Orders.class, OrdersDetail.class, Products.class}, version = 2, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract CategoriesDao categoriesDao();
 
