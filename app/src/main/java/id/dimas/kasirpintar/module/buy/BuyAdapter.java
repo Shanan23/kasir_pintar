@@ -63,19 +63,29 @@ public class BuyAdapter extends RecyclerView.Adapter<BuyAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvCategoryName;
+        private TextView tvItemName;
+        private TextView lblDate;
+        private TextView lblDesc;
+        private TextView contentTotal;
         private ImageView ivDelete;
         private OnItemClickListener itemClickListener;
 
         ViewHolder(@NonNull View itemView, Context context, OnItemClickListener onItemClickListener) {
             super(itemView);
             this.itemClickListener = onItemClickListener;
-            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
-            ivDelete = itemView.findViewById(R.id.ivDelete);
+            tvItemName = (TextView) itemView.findViewById(R.id.tvItemName);
+            lblDate = (TextView) itemView.findViewById(R.id.lblDate);
+            lblDesc = (TextView) itemView.findViewById(R.id.lblDesc);
+            contentTotal = (TextView) itemView.findViewById(R.id.contentTotal);
+            ivDelete = (ImageView) itemView.findViewById(R.id.ivDelete);
+
         }
 
         void bind(Buy buy) {
-            tvCategoryName.setText(buy.getName());
+            tvItemName.setText(buy.getName());
+            lblDate.setText(buy.getCreatedAt());
+            lblDesc.setText(buy.getDesc());
+            contentTotal.setText(String.valueOf(buy.getAmount()));
             ivDelete.setOnClickListener(v -> {
                 if (itemClickListener != null) {
                     itemClickListener.onDeleteClick(buy);

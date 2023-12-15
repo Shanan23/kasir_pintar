@@ -76,6 +76,18 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:text="Lupa Password"
+        android:textColor="@color/md_theme_dark_background"
+        app:layout_constraintBottom_toBottomOf="@id/showPasswordCheckbox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/showPasswordCheckbox" />
+
     <CheckBox
         android:id="@+id/showPasswordCheckbox"
         android:layout_width="wrap_content"

@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     private SuccessDialog successDialog;
     private AppDatabase appDatabase;
     SharedPreferenceHelper sharedPreferenceHelper;
+    private TextView forgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         tilPassword = findViewById(R.id.tilPassword);
         etPassword = findViewById(R.id.etPassword);
         etPin = findViewById(R.id.etPin);
+        forgotPassword = findViewById(R.id.forgotPassword);
         showPasswordCheckbox = findViewById(R.id.showPasswordCheckbox);
         cvLogin = findViewById(R.id.cvLogin);
 
@@ -124,6 +126,11 @@ public class LoginActivity extends AppCompatActivity {
             password = etPassword.getText().toString();
             pin = etPin.getText().toString();
             doSignIn();
+        });
+
+        forgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgotActivity.class);
+            startActivity(intent);
         });
     }
 
