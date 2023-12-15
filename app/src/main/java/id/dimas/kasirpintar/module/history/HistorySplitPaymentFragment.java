@@ -1,14 +1,22 @@
 package id.dimas.kasirpintar.module.history;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
+import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.model.Categories;
+import id.dimas.kasirpintar.model.Orders;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +33,11 @@ public class HistorySplitPaymentFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private AppDatabase appDatabase;
+    private RecyclerView recyclerView;
+    private List<Orders> orderList;
+    private HistoryAdapter historyAdapter;
 
     public HistorySplitPaymentFragment() {
         // Required empty public constructor
@@ -61,6 +74,53 @@ public class HistorySplitPaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history_split_payment, container, false);
+        View view =  inflater.inflate(R.layout.fragment_history_split_payment, container, false);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        appDatabase = MyApp.getAppDatabase();
+        orderList = new ArrayList<>();
+        historyAdapter = new HistoryAdapter(requireContext(), orderList, new HistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onEditClick(Categories categories) {
+
+            }
+
+            @Override
+            public void onDeleteClick(Categories categories) {
+
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(historyAdapter);
+
+
+        return view;
+    }
+
+    private void retrieveOrders() {
+        new Thread(() -> {
+            List<Orders> allOrdersByStatus = appDatabase.ordersDao().getAllOrdersByStatus(MyApp.Status.PROCESSING.name());
+
+            List<Orders> activeOrders = new ArrayList<>();
+            for (Orders entity : allOrdersByStatus) {
+                if (entity.getId() != -1) {
+                    activeOrders.add(entity);
+                }
+            }
+
+            // Update the noteList and notify the adapter
+            orderList.clear();
+            orderList.addAll(activeOrders);
+
+            requireActivity().runOnUiThread(() ->
+                    historyAdapter.notifyDataSetChanged()
+            );
+        }).start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        retrieveOrders();
     }
 }

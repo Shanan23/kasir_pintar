@@ -124,7 +124,7 @@
         android:padding="5dp"
         app:cardBackgroundColor="@color/md_theme_light_background"
         app:cardCornerRadius="10dp"
-        app:layout_constraintEnd_toStartOf="@id/ivClosing"
+        app:layout_constraintEnd_toStartOf="@id/ivBuy"
         app:layout_constraintStart_toEndOf="@id/ivProduct"
         app:layout_constraintTop_toBottomOf="@id/cvProfile">
 
@@ -150,7 +150,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/ivClosing"
+        android:id="@+id/ivBuy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -222,7 +222,7 @@
         android:padding="5dp"
         app:cardBackgroundColor="@color/md_theme_light_background"
         app:cardCornerRadius="10dp"
-        app:layout_constraintEnd_toStartOf="@id/ivClosing"
+        app:layout_constraintEnd_toStartOf="@id/ivBuy"
         app:layout_constraintStart_toEndOf="@id/ivProduct"
         app:layout_constraintTop_toBottomOf="@id/ivHistory">
 
@@ -257,7 +257,7 @@
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivHistory"
-        app:layout_constraintTop_toBottomOf="@id/ivClosing">
+        app:layout_constraintTop_toBottomOf="@id/ivBuy">
 
         <LinearLayout
             android:layout_width="match_parent"

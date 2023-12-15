@@ -1,10 +1,15 @@
 package id.dimas.kasirpintar.module.menu;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.cardview.widget.CardView;
+
+import java.util.Objects;
 
 import id.dimas.kasirpintar.R;
 
@@ -20,16 +25,17 @@ public class PinDialog {
         View dialogView = inflater.inflate(R.layout.dialog_pin, null);
 
         EditText etPin = dialogView.findViewById(R.id.etPin);
+        CardView cvOk = dialogView.findViewById(R.id.cvOk);
+        cvOk.setOnClickListener(v -> {
+            String enteredPin = etPin.getText().toString().trim();
+            listener.onPinEntered(enteredPin);
+            ((Dialog) Objects.requireNonNull(builder.create())).dismiss();
+
+        });
 
         builder.setView(dialogView)
-                .setPositiveButton("Ok", (dialog, which) -> {
-                    String enteredPin = etPin.getText().toString().trim();
-                    listener.onPinEntered(enteredPin);
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-        builder
-                .setCancelable(false);
-        builder.create().show();
+                .setCancelable(false)
+                .create()
+                .show();
     }
 }

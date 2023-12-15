@@ -8,6 +8,7 @@ import androidx.room.Upsert;
 import java.util.List;
 
 import id.dimas.kasirpintar.model.Products;
+import id.dimas.kasirpintar.model.ReportTrxItemStock;
 
 @Dao
 public interface ProductsDao {
@@ -17,4 +18,8 @@ public interface ProductsDao {
     long upsertProducts(Products products);
     @Query("SELECT * FROM Products")
     List<Products> getAllProducts();
+    @Query("SELECT * FROM Products WHERE id = :pId")
+    Products getAllProductsById(String pId);
+    @Query("SELECT id, name, stock FROM Products")
+    List<ReportTrxItemStock> getAllProductsStock();
 }

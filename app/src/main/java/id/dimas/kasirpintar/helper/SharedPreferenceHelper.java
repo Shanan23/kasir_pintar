@@ -9,11 +9,34 @@ public class SharedPreferenceHelper {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_IS_SAVED_PIN = "isSavedPin";
+    private static final String KEY_IS_SHOW_PROFIT = "isShowProfit";
+    private static final String KEY_SHOP_NAME = "shopName";
+    private static final String KEY_SHOP_ADDRESS = "shopAddress";
 
     private final SharedPreferences sharedPreferences;
 
     public SharedPreferenceHelper(Context context) {
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+    }
+
+    public void saveShopName(String shopName) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SHOP_NAME, shopName);
+        editor.apply();
+    }
+
+    public String getShopName() {
+        return sharedPreferences.getString(KEY_SHOP_NAME, "");
+    }
+
+    public void saveShopAddress(String shopAddress) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SHOP_ADDRESS, shopAddress);
+        editor.apply();
+    }
+
+    public String getShopAddress() {
+        return sharedPreferences.getString(KEY_SHOP_ADDRESS, "");
     }
 
     public void saveUsername(String username) {
@@ -25,6 +48,17 @@ public class SharedPreferenceHelper {
     public String getUsername() {
         return sharedPreferences.getString(KEY_USERNAME, "");
     }
+
+    public void setShowProfit(boolean isShowProfit) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_IS_SHOW_PROFIT, isShowProfit);
+        editor.apply();
+    }
+
+    public boolean isShowProfit() {
+        return sharedPreferences.getBoolean(KEY_IS_SHOW_PROFIT, true);
+    }
+
 
     public void setLoggedIn(boolean isLoggedIn) {
         SharedPreferences.Editor editor = sharedPreferences.edit();

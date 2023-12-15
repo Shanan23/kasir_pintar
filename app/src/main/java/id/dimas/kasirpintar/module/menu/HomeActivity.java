@@ -1,22 +1,30 @@
 package id.dimas.kasirpintar.module.menu;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import java.util.List;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.HashUtils;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
+import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.OrdersDetail;
+import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Users;
+import id.dimas.kasirpintar.module.buy.BuyActivity;
 import id.dimas.kasirpintar.module.cart.CartActivity;
 import id.dimas.kasirpintar.module.history.HistoryActivity;
 import id.dimas.kasirpintar.module.product.ProductActivity;
@@ -43,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageView imgEdit;
     private CardView ivProduct;
     private CardView ivHistory;
-    private CardView ivClosing;
+    private CardView ivBuy;
     private CardView ivReport;
     private CardView ivPrint;
     private CardView ivSetting;
@@ -52,6 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     private SharedPreferenceHelper sharedPreferenceHelper;
     private Context mContext;
     private AppDatabase appDatabase;
+    private ConstraintLayout profitHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,26 +84,37 @@ public class HomeActivity extends AppCompatActivity {
         imgEdit = (ImageView) findViewById(R.id.imgEdit);
         ivProduct = (CardView) findViewById(R.id.ivProduct);
         ivHistory = (CardView) findViewById(R.id.ivHistory);
-        ivClosing = (CardView) findViewById(R.id.ivClosing);
+        ivBuy = (CardView) findViewById(R.id.ivBuy);
         ivReport = (CardView) findViewById(R.id.ivReport);
         ivPrint = (CardView) findViewById(R.id.ivPrint);
         ivSetting = (CardView) findViewById(R.id.ivSetting);
         ivSecurity = (CardView) findViewById(R.id.ivSecurity);
         cvTransaction = (CardView) findViewById(R.id.cvTransaction);
+        profitHome = (ConstraintLayout) findViewById(R.id.profitHome);
 
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
 
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
+
+        contentShopName.setText(sharedPreferenceHelper.getShopName());
+        contentShopAddress.setText(sharedPreferenceHelper.getShopAddress());
+
         if (!sharedPreferenceHelper.isSavedPin()) {
             showDialogPin();
         }
+
         if (MyApp.getPrintHelper().selectedDevice == null) {
             MyApp.getPrintHelper().browseBluetoothDevice(mContext);
         }
 
         ivProduct.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProductActivity.class);
+            startActivity(intent);
+        });
+
+        ivBuy.setOnClickListener(v -> {
+            Intent intent = new Intent(this, BuyActivity.class);
             startActivity(intent);
         });
 
@@ -118,10 +138,39 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        imgEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
         cvTransaction.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
             startActivity(intent);
         });
+
+        ivPrint.setOnClickListener(v -> {
+            new Thread(() -> {
+                Orders lastOrder = appDatabase.ordersDao().getLastOrders();
+                List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailById(lastOrder.getId());
+                for (int i = 0; i < ordersDetailList.size(); i++) {
+                    Products products = appDatabase.productsDao().getAllProductsById(ordersDetailList.get(i).getItemId());
+                    ordersDetailList.get(i).setProducts(products);
+                }
+                lastOrder.setOrdersDetailList(ordersDetailList);
+                MyApp.getPrintHelper().printBluetooth(mContext, lastOrder, ordersDetailList);
+            }).start();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (sharedPreferenceHelper.isShowProfit()) {
+            profitHome.setVisibility(View.VISIBLE);
+        } else {
+            profitHome.setVisibility(View.GONE);
+        }
     }
 
     void showDialogPin() {

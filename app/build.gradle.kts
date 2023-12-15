@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -10,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "id.dimas.kasirpintar"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -80,12 +81,11 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("androidx.room:room-runtime:$roomVersion")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
-
-    // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$roomVersion")
+
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
 
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -95,6 +95,9 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0")
-
-
+    implementation("org.apache.poi:poi:5.2.5") {
+        exclude("org.apache.xmlbeans")
+        exclude("org.apache.xmlgraphics")
+    }
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
 }

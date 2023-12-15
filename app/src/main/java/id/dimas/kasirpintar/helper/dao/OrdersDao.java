@@ -17,4 +17,10 @@ public interface OrdersDao {
     long upsertOrders(Orders orders);
     @Query("SELECT * FROM Orders")
     List<Orders> getAllOrders();
+
+    @Query("SELECT * FROM Orders WHERE order_status = :status")
+    List<Orders> getAllOrdersByStatus(String status);
+
+    @Query("SELECT * FROM Orders ORDER BY id DESC LIMIT 1")
+    Orders getLastOrders();
 }

@@ -128,7 +128,7 @@
         android:padding="5dp"
         app:cardBackgroundColor="@color/md_theme_light_background"
         app:cardCornerRadius="10dp"
-        app:layout_constraintEnd_toStartOf="@id/cvRClosing"
+        app:layout_constraintEnd_toStartOf="@id/cvRBuy"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cvRTrx">
 
@@ -156,7 +156,7 @@
 
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cvRClosing"
+        android:id="@+id/cvRBuy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"

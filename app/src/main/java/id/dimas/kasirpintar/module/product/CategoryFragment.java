@@ -2,13 +2,6 @@ package id.dimas.kasirpintar.module.product;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,6 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,9 +23,7 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
-import id.dimas.kasirpintar.helper.dao.ProductsDao;
 import id.dimas.kasirpintar.model.Categories;
-import id.dimas.kasirpintar.model.Products;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,7 +88,7 @@ public class CategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
         editTextSearch = view.findViewById(R.id.editTextSearch);
-        recyclerViewCategory = view.findViewById(R.id.recyclerViewCategory);
+        recyclerViewCategory = view.findViewById(R.id.recyclerViewBuy);
         ivAddCategory = view.findViewById(R.id.ivAddCategory);
         editTextSearch = view.findViewById(R.id.editTextSearch);
         clearButton = view.findViewById(R.id.clearButton);

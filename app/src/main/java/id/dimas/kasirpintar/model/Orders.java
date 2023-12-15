@@ -2,9 +2,11 @@ package id.dimas.kasirpintar.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class Orders implements Serializable {
@@ -30,6 +32,17 @@ public class Orders implements Serializable {
     public String createdAt;
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
+
+    @Ignore
+    public List<OrdersDetail> ordersDetailList;
+
+    public List<OrdersDetail> getOrdersDetailList() {
+        return ordersDetailList;
+    }
+
+    public void setOrdersDetailList(List<OrdersDetail> ordersDetailList) {
+        this.ordersDetailList = ordersDetailList;
+    }
 
     public int getPayAmount() {
         return payAmount;

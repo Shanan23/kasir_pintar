@@ -1,13 +1,14 @@
 package id.dimas.kasirpintar.module.cart;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -23,7 +24,6 @@ import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
-import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class PaymentActivity extends AppCompatActivity {
@@ -68,6 +68,11 @@ public class PaymentActivity extends AppCompatActivity {
         appDatabase = MyApp.getAppDatabase();
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
+
+        cvBack.setOnClickListener(v -> finish());
+        tvLeftTitle.setText("Pembayaran");
+        tvRightTitle.setVisibility(View.GONE);
+
         Date currentDate = new Date();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -82,6 +87,21 @@ public class PaymentActivity extends AppCompatActivity {
             contentTotal.setText(String.valueOf(receivedOrders.amount));
             contentTrxDate.setText(formattedDate);
         }
+
+        new Thread(() -> {
+            receivedOrders.setOrderStatus(MyApp.Status.PENDING.name());
+            long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
+            receivedOrders.setId((int) id);
+            if (id > 0) {
+                long idDetail = 0;
+                for (OrdersDetail ordersDetail : receivedOrdersDetails
+                ) {
+                    ordersDetail.ordersId = (int) id;
+                    idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
+                    ordersDetail.setId((int) idDetail);
+                }
+            }
+        }).start();
 
         cvDPay.setOnClickListener(v -> {
             if (etTotalBayar.getText().toString().isEmpty()) {
@@ -100,6 +120,7 @@ public class PaymentActivity extends AppCompatActivity {
                 receivedOrders.setDifferent(receivedOrders.getAmount() - payAmount);
                 receivedOrders.setOrderStatus(MyApp.Status.PROCESSING.name());
             }
+
             String paidDate = dateFormat.format(currentDate);
             receivedOrders.setPaidAt(paidDate);
             receivedOrders.setPayAmount(payAmount);

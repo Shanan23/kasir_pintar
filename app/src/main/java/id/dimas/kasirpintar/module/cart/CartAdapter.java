@@ -16,7 +16,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
+import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
 
@@ -54,6 +56,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         private OnItemClickListener itemClickListener;
         Context context;
         private List<Products> cartList;
+        private AppDatabase appDatabase;
 
         public ViewHolder(View itemView, Context context, List<Products> cartList, OnItemClickListener itemClickListener) {
             super(itemView);
@@ -69,7 +72,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             this.context = context;
             this.itemClickListener = itemClickListener;
             this.cartList = cartList;
-
+            appDatabase = MyApp.getAppDatabase();
             orderDetails = new ArrayList<>();
 
         }
@@ -116,7 +119,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 if (productExists) {
                     OrdersDetail existingOrderDetail = orderDetails.get(existingPosition);
                     int updatedQty = existingOrderDetail.getQty() + 1;
+                    int currentStock = cartList.get(position).getStock();
+                    if (Boolean.parseBoolean(currentProduct.getIsStock())) {
+                        if (updatedQty > currentProduct.getStock()) {
+                            return;
+                        }
+                    }
+                    cartList.get(position).setStock(currentStock - 1);
                     cartList.get(position).setQty(updatedQty);
+                    currentProduct.setStock(currentStock - 1);
+                    new Thread(() -> {
+                        appDatabase.productsDao().upsertProducts(currentProduct);
+                    }).start();
                     existingOrderDetail.setQty(updatedQty);
                     existingOrderDetail.setTotalDetails(updatedQty * Integer.parseInt(existingOrderDetail.getProducts().getSellPrice()));
                     orderDetails.set(existingPosition, existingOrderDetail);
@@ -124,16 +138,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 } else {
                     // If the product is not in orderDetails, add a new orderDetail
                     OrdersDetail newOrderDetail = new OrdersDetail();
+                    int currentStock = cartList.get(position).getStock();
+                    if (Boolean.parseBoolean(currentProduct.getIsStock())) {
+                        if (1 > currentProduct.getStock()) {
+                            return;
+                        }
+                    }
                     currentProduct.setQty(1);
+                    currentProduct.setStock(currentStock - 1);
+                    new Thread(() -> {
+                        appDatabase.productsDao().upsertProducts(currentProduct);
+                    }).start();
+                    cartList.get(position).setStock(currentStock - 1);
                     cartList.get(position).setQty(1);
                     newOrderDetail.setProducts(currentProduct);
                     newOrderDetail.setItemId(String.valueOf(currentProduct.getId()));
                     newOrderDetail.setName(currentProduct.getName());
                     newOrderDetail.setTotalDetails(1 * Integer.parseInt(currentProduct.getSellPrice()));
                     newOrderDetail.setQty(1);
-                    // Initial quantity is 1
                     orderDetails.add(newOrderDetail);
                     notifyItemChanged(position);
+
                 }
             }
         }
@@ -159,6 +184,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
                 // Update the quantity to 0 in the cartList
                 int currentQty = 0;
+                cartList.get(position).setStock(cartList.get(position).getQty() + cartList.get(position).getStock());
+                currentProduct.setStock(cartList.get(position).getQty() + cartList.get(position).getStock());
+                new Thread(() -> {
+                    appDatabase.productsDao().upsertProducts(currentProduct);
+                }).start();
                 cartList.get(position).setQty(currentQty);
                 currentProduct.setQty(currentQty);
                 notifyItemChanged(position);

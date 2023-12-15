@@ -10,64 +10,70 @@
         android:id="@+id/actionBarCustom"
         layout="@layout/actionbar_custom" />
 
-    <ImageView
-        android:id="@+id/imgHeader"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/ic_bag"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actionBarCustom" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profitHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/actionBarCustom">
 
-    <TextView
-        android:id="@+id/lblHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LAPORAN HARI INI"
-        android:textColor="@color/md_theme_light_background"
-        app:layout_constraintBottom_toTopOf="@id/lblSale"
-        app:layout_constraintStart_toEndOf="@id/imgHeader"
-        app:layout_constraintTop_toBottomOf="@id/actionBarCustom" />
+        <ImageView
+            android:id="@+id/imgHeader"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/ic_bag"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/lblSale"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:text="Total Penjualan"
-        android:textColor="@color/md_theme_light_background"
-        app:layout_constraintBottom_toTopOf="@id/lblProfit"
-        app:layout_constraintStart_toEndOf="@id/imgHeader"
-        app:layout_constraintTop_toBottomOf="@id/lblHeader" />
+        <TextView
+            android:id="@+id/lblHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LAPORAN HARI INI"
+            android:textColor="@color/md_theme_light_background"
+            app:layout_constraintBottom_toTopOf="@id/lblSale"
+            app:layout_constraintStart_toEndOf="@id/imgHeader"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/contentSale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=": xxx"
-        android:textColor="@color/md_theme_light_background"
-        app:layout_constraintBottom_toTopOf="@id/lblProfit"
-        app:layout_constraintStart_toEndOf="@id/lblSale"
-        app:layout_constraintTop_toBottomOf="@id/lblHeader" />
+        <TextView
+            android:id="@+id/lblSale"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="Total Penjualan"
+            android:textColor="@color/md_theme_light_background"
+            app:layout_constraintBottom_toTopOf="@id/lblProfit"
+            app:layout_constraintStart_toEndOf="@id/imgHeader"
+            app:layout_constraintTop_toBottomOf="@id/lblHeader" />
 
-    <TextView
-        android:id="@+id/lblProfit"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:text="Total Profit"
-        android:textColor="@color/md_theme_light_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/imgHeader"
-        app:layout_constraintTop_toBottomOf="@id/lblSale" />
+        <TextView
+            android:id="@+id/contentSale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": xxx"
+            android:textColor="@color/md_theme_light_background"
+            app:layout_constraintBottom_toTopOf="@id/lblProfit"
+            app:layout_constraintStart_toEndOf="@id/lblSale"
+            app:layout_constraintTop_toBottomOf="@id/lblHeader" />
 
-    <TextView
-        android:id="@+id/contentProfit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=": xxx"
-        android:textColor="@color/md_theme_light_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/lblProfit"
-        app:layout_constraintTop_toBottomOf="@id/lblSale" />
+        <TextView
+            android:id="@+id/lblProfit"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="Total Profit"
+            android:textColor="@color/md_theme_light_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgHeader"
+            app:layout_constraintTop_toBottomOf="@id/lblSale" />
 
+        <TextView
+            android:id="@+id/contentProfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": xxx"
+            android:textColor="@color/md_theme_light_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblProfit"
+            app:layout_constraintTop_toBottomOf="@id/lblSale" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
