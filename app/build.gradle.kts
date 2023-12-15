@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
 }
 
 android {
@@ -21,8 +20,12 @@ android {
             useSupportLibrary = true
         }
 
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
+        //add this in the build.gradle.kts(app) file
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] =
+                    "$projectDir/schemas"
+            }
         }
     }
 
