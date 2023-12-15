@@ -8,6 +8,7 @@ import androidx.room.Upsert;
 import java.util.List;
 
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.Profit;
 
 @Dao
 public interface OrdersDao {
@@ -20,6 +21,9 @@ public interface OrdersDao {
 
     @Query("SELECT * FROM Orders WHERE order_status = :status")
     List<Orders> getAllOrdersByStatus(String status);
+
+    @Query("SELECT SUM(profit) as profit, 0 as totalItem, SUM(amount) as total FROM Orders")
+    Profit getAllProfit();
 
     @Query("SELECT * FROM Orders ORDER BY id DESC LIMIT 1")
     Orders getLastOrders();

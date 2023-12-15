@@ -20,6 +20,7 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.Profit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -118,11 +119,15 @@ public class HistoryCancelFragment extends Fragment {
 
                         // Validate if the duration is greater than 24 hours
                         if (hours > 24) {
+                            Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());
+                            entity.setProfitItem(profit);
                             activeOrders.add(entity);
                         }
                     } catch (Exception e) {
                         System.out.println("Invalid date format. Please use dd-MM-yyyy HH:mm format.");
                     }
+
+
                 }
             }
 

@@ -23,6 +23,7 @@ import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
+import id.dimas.kasirpintar.model.Profit;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.buy.BuyActivity;
 import id.dimas.kasirpintar.module.cart.CartActivity;
@@ -94,6 +95,9 @@ public class HomeActivity extends AppCompatActivity {
 
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
+        cvBack.setVisibility(View.INVISIBLE);
+        tvLeftTitle.setText("KASIR PINTAR");
+        tvRightTitle.setVisibility(View.GONE);
 
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
@@ -162,15 +166,27 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    void getProfit(){
+        new Thread(() -> {
+            Profit lastOrder = appDatabase.ordersDao().getAllProfit();
+            runOnUiThread(() -> {
+                contentSale.setText(String.valueOf(lastOrder.total));
+                contentProfit.setText(String.valueOf(lastOrder.profit));
+            });
+        }).start();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-
+        getProfit();
         if (sharedPreferenceHelper.isShowProfit()) {
             profitHome.setVisibility(View.VISIBLE);
         } else {
             profitHome.setVisibility(View.GONE);
         }
+
+
     }
 
     void showDialogPin() {

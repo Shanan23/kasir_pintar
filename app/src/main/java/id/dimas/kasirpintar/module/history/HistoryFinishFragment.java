@@ -17,6 +17,7 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.Profit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,6 +105,8 @@ public class HistoryFinishFragment extends Fragment {
             List<Orders> activeOrders = new ArrayList<>();
             for (Orders entity : allOrdersByStatus) {
                 if (entity.getId() != -1) {
+                    Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());
+                    entity.setProfitItem(profit);
                     activeOrders.add(entity);
                 }
             }

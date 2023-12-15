@@ -79,7 +79,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         void bind(Orders orders) {
             tvItemName.setText(String.format("#000%d", orders.getId()));
             contentCalendar.setText(orders.getOrderDate());
-//            contentQty.setText(orders.get());
+            contentQty.setText(String.valueOf(orders.getProfitItem().getTotalItem()));
             contentTotal.setText(String.valueOf(orders.getAmount()));
         }
     }

@@ -35,6 +35,16 @@ public class Orders implements Serializable {
 
     @Ignore
     public List<OrdersDetail> ordersDetailList;
+    @Ignore
+    public Profit profitItem;
+
+    public Profit getProfitItem() {
+        return profitItem;
+    }
+
+    public void setProfitItem(Profit profitItem) {
+        this.profitItem = profitItem;
+    }
 
     public List<OrdersDetail> getOrdersDetailList() {
         return ordersDetailList;

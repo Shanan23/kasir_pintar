@@ -8,6 +8,7 @@ import androidx.room.Upsert;
 import java.util.List;
 
 import id.dimas.kasirpintar.model.OrdersDetail;
+import id.dimas.kasirpintar.model.Profit;
 import id.dimas.kasirpintar.model.ReportTrxItem;
 
 @Dao
@@ -22,6 +23,9 @@ public interface OrdersDetailDao {
     List<OrdersDetail> getAllOrdersDetail();
     @Query("SELECT * FROM OrdersDetail WHERE order_id = :orderId")
     List<OrdersDetail> getAllOrdersDetailById(int orderId);
+
+    @Query("SELECT SUM(qty) as totalItem, 0 as profit, 0 as total FROM OrdersDetail WHERE order_id = :orderId")
+    Profit getAllOrdersDetailItem(int orderId);
 
     @Query("SELECT * FROM OrdersDetail WHERE order_id = :orderId AND order_date BETWEEN :startDate AND :endDate")
     List<OrdersDetail> getAllOrdersDetailByDate(int orderId, String startDate, String endDate);

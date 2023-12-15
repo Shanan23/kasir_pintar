@@ -17,6 +17,7 @@ import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.Profit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +75,7 @@ public class HistorySplitPaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_history_split_payment, container, false);
+        View view = inflater.inflate(R.layout.fragment_history_split_payment, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         appDatabase = MyApp.getAppDatabase();
@@ -104,6 +105,8 @@ public class HistorySplitPaymentFragment extends Fragment {
             List<Orders> activeOrders = new ArrayList<>();
             for (Orders entity : allOrdersByStatus) {
                 if (entity.getId() != -1) {
+                    Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());
+                    entity.setProfitItem(profit);
                     activeOrders.add(entity);
                 }
             }
