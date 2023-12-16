@@ -39,6 +39,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleVerification" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilOtp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:hint="Masukkan kode otp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/messageVerification">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/md_theme_dark_background"
+            android:textColorHighlight="@color/md_theme_dark_primary" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cvRetry"
         android:layout_width="match_parent"
@@ -49,7 +70,7 @@
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messageVerification">
+        app:layout_constraintTop_toBottomOf="@id/tilOtp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

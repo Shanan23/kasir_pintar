@@ -2,9 +2,6 @@ package id.dimas.kasirpintar;
 
 import android.app.Application;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.PrintHelper;
 

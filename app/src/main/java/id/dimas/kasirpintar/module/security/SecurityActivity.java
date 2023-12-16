@@ -1,13 +1,17 @@
 package id.dimas.kasirpintar.module.security;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
@@ -17,17 +21,6 @@ import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.HashUtils;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Users;
-import id.dimas.kasirpintar.module.registration.VerificationActivity;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SecurityActivity extends AppCompatActivity {
 
@@ -96,46 +89,46 @@ public class SecurityActivity extends AppCompatActivity {
                 return;
             }
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            // If the user is not null, proceed to change the password
-            if (user != null) {
-                // Assume the user is authenticated with email and password
-                String email = sharedPreferenceHelper.getUsername(); // Replace with the user's email
-                String currentPassword = etOldPassword.getText().toString(); // Replace with the user's current password
-                String newPassword = etNewPassword.getText().toString(); // Replace with the new password
-
-                // Create a credential using the user's email and current password
-                AuthCredential credential = EmailAuthProvider.getCredential(email, currentPassword);
-
-                // Reauthenticate the user with the provided credential
-                user.reauthenticate(credential)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // If reauthentication is successful, proceed to update the password
-                                user.updatePassword(newPassword)
-                                        .addOnCompleteListener(updateTask -> {
-                                            if (updateTask.isSuccessful()) {
-                                                // Password updated successfully
-                                                // You may want to sign out the user or update UI accordingly
-
-                                                SuccessDialog successDialog = new SuccessDialog(mContext, "Ganti Password Berhasil", "", () -> {
-                                                    finish();
-                                                });
-                                                successDialog.show();
-                                            } else {
-                                                // Handle the error when updating the password
-                                                FailedDialog failedDialog = new FailedDialog(mContext, "Ganti Password Gagal", "");
-                                                failedDialog.show();
-                                            }
-                                        });
-                            } else {
-                                // Handle the error when reauthenticating the user
-                                FailedDialog failedDialog = new FailedDialog(mContext, "Ganti Password Gagal", "");
-                                failedDialog.show();
-                            }
-                        });
-            }
+//            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//
+//            // If the user is not null, proceed to change the password
+//            if (user != null) {
+//                // Assume the user is authenticated with email and password
+//                String email = sharedPreferenceHelper.getUsername(); // Replace with the user's email
+//                String currentPassword = etOldPassword.getText().toString(); // Replace with the user's current password
+//                String newPassword = etNewPassword.getText().toString(); // Replace with the new password
+//
+//                // Create a credential using the user's email and current password
+//                AuthCredential credential = EmailAuthProvider.getCredential(email, currentPassword);
+//
+//                // Reauthenticate the user with the provided credential
+//                user.reauthenticate(credential)
+//                        .addOnCompleteListener(task -> {
+//                            if (task.isSuccessful()) {
+//                                // If reauthentication is successful, proceed to update the password
+//                                user.updatePassword(newPassword)
+//                                        .addOnCompleteListener(updateTask -> {
+//                                            if (updateTask.isSuccessful()) {
+//                                                // Password updated successfully
+//                                                // You may want to sign out the user or update UI accordingly
+//
+//                                                SuccessDialog successDialog = new SuccessDialog(mContext, "Ganti Password Berhasil", "", () -> {
+//                                                    finish();
+//                                                });
+//                                                successDialog.show();
+//                                            } else {
+//                                                // Handle the error when updating the password
+//                                                FailedDialog failedDialog = new FailedDialog(mContext, "Ganti Password Gagal", "");
+//                                                failedDialog.show();
+//                                            }
+//                                        });
+//                            } else {
+//                                // Handle the error when reauthenticating the user
+//                                FailedDialog failedDialog = new FailedDialog(mContext, "Ganti Password Gagal", "");
+//                                failedDialog.show();
+//                            }
+//                        });
+//            }
         });
 
         cvChangePin.setOnClickListener(v -> {

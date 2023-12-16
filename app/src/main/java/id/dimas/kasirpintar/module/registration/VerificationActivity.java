@@ -9,22 +9,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.textfield.TextInputEditText;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.EmailHelper;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.menu.HomeActivity;
@@ -36,9 +33,9 @@ public class VerificationActivity extends AppCompatActivity {
     private CardView cvRetry;
     private ImageView imgLbl;
     private CardView cvCheckVerification;
-//    private FirebaseAuth mAuth;
+    //    private FirebaseAuth mAuth;
     private AppDatabase appDatabase;
-//    private FirebaseUser mUser;
+    //    private FirebaseUser mUser;
     private String TAG = "VerificationActivity";
     private Users users;
     private Context mContext;
@@ -50,6 +47,8 @@ public class VerificationActivity extends AppCompatActivity {
     private TextView tvLeftTitle;
     private TextView tvRightTitle;
     SharedPreferenceHelper sharedPreferenceHelper;
+    private TextInputEditText etOtp;
+    private Users receivedUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +60,12 @@ public class VerificationActivity extends AppCompatActivity {
         retryEmail = (TextView) findViewById(R.id.retryEmail);
         cvRetry = (CardView) findViewById(R.id.cvRetry);
         imgLbl = (ImageView) findViewById(R.id.imgLbl);
+        etOtp = (TextInputEditText) findViewById(R.id.etOtp);
         cvCheckVerification = (CardView) findViewById(R.id.cvCheckVerification);
+
+        Intent intentExtra = getIntent();
+        String receivedOtp = intentExtra.getStringExtra("otp");
+        receivedUser = (Users) intentExtra.getSerializableExtra("users");
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         cvBack = (CardView) findViewById(R.id.cvBack);
@@ -72,12 +76,9 @@ public class VerificationActivity extends AppCompatActivity {
         tvRightTitle.setVisibility(View.INVISIBLE);
         mContext = this;
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
-        mAuth = FirebaseAuth.getInstance();
         appDatabase = MyApp.getAppDatabase();
-        mUser = mAuth.getCurrentUser();
-        retryEmail.setText(getString(R.string.retry_email, mUser.getEmail()));
+        retryEmail.setText(getString(R.string.retry_email, receivedUser.getEmail()));
 
-        users = new Users();
 
         cvRetry.setOnClickListener(v -> {
             doSendEmail();
@@ -85,90 +86,40 @@ public class VerificationActivity extends AppCompatActivity {
         cvBack.setOnClickListener(v -> finish());
 
         cvCheckVerification.setOnClickListener(v -> {
-            mAuth = FirebaseAuth.getInstance();
-            mUser = mAuth.getCurrentUser();
-            if (mUser != null) {
-                mUser.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Check the updated email verification status
-                        boolean isEmailVerified = mUser.isEmailVerified();
-                        Log.d(TAG, String.format("isEmailVerified:%s", isEmailVerified));
+            if (receivedOtp.equalsIgnoreCase(etOtp.getText().toString())) {
+                boolean isEmailVerified = true;
+                Log.d(TAG, String.format("isEmailVerified:%s", isEmailVerified));
 
-                        sharedPreferenceHelper.setLoggedIn(true);
-                        sharedPreferenceHelper.setIsSavedPin(false);
-                        sharedPreferenceHelper.saveUsername(mUser.getEmail());
+                sharedPreferenceHelper.setLoggedIn(true);
+                sharedPreferenceHelper.setIsSavedPin(false);
+                sharedPreferenceHelper.saveUsername(receivedUser.getEmail());
 
-                        new Thread(() -> {
-                            Users users = appDatabase.usersDao().getUserById(mUser.getUid());
-                            if (users == null) {
-                                users = new Users();
-                            }
-                            users.setId(mUser.getUid());
-                            users.setActive(true);
-                            users.setEmail(mUser.getEmail());
-                            users.setName(mUser.getDisplayName());
-                            appDatabase.usersDao().upsertUsers(users);
-                        }).start();
+                new Thread(() -> {
+                    Users users = appDatabase.usersDao().getUserById(receivedUser.getId());
+                    users.setActive(true);
+                    appDatabase.usersDao().upsertUsers(users);
+                }).start();
 
-                        if (isEmailVerified) {
-                            Intent intent = new Intent(mContext, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
-                    }
-                });
+                if (isEmailVerified) {
+                    Intent intent = new Intent(mContext, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            } else {
+                failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Otp tidak sesuai");
+                failedDialog.show();
             }
-
         });
     }
 
     private void doSendEmail() {
-        if (mUser != null) {
-            mUser.sendEmailVerification().addOnCompleteListener(VerificationActivity.this, task1 -> {
-                if (task1.isSuccessful()) {
-                    Log.d(TAG, "sendEmailVerification:success");
-                    users.id = mUser.getUid();
-                    new UsersDbAsync(appDatabase, users, "getById", new UsersDbAsync.AsyncTaskListener() {
-                        @Override
-                        public void onTaskComplete(Users result) {
-                            users = result;
-                            users.id = mUser.getUid();
-                            users.isVerificationSend = true;
-                            new UsersDbAsync(appDatabase, users, "upsert", null).execute();
 
-                            successDialog = new SuccessDialog(mContext, "Registrasi Berhasil", getString(R.string.check_email), () -> cvCheckVerification.performClick());
-                            successDialog.show();
-                        }
+        String generatedOtp = EmailHelper.generateOTP();
+        Log.d("doSendEmail", "generatedOtp = " + generatedOtp);
 
-                        @Override
-                        public void onTaskFailed() {
-
-                        }
-                    }).execute();
-                } else {
-                    Log.d(TAG, "sendEmailVerification:failed", task1.getException());
-
-//                    users.isVerificationSend = false;
-//                    new UsersDbAsync(appDatabase, users, "upsert", null).execute();
-
-
-                    String exceptionMessage = task1.getException().getMessage();
-                    if (exceptionMessage != null) {
-                        if (exceptionMessage.contains("We have blocked all requests from this device due to unusual activity. Try again later.")) {
-                            failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terlalu banyak percobaan, coba lagi beberapa saat.");
-                        } else {
-                            failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
-                        }
-                    } else {
-                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
-                    }
-                    failedDialog.show();
-                }
-            });
-        }
+        EmailHelper.sendEmail(receivedUser.getEmail(), receivedUser.getName(), generatedOtp);
     }
 
     private static class UsersDbAsync extends AsyncTask<Void, Void, Users> {

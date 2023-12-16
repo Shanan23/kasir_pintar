@@ -35,7 +35,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilPassword"
+        android:id="@+id/tilOtp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -64,7 +64,7 @@
         android:hint="@string/pin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilPassword">
+        app:layout_constraintTop_toBottomOf="@id/tilOtp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPin"

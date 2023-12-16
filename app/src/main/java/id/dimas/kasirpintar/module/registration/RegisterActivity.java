@@ -2,11 +2,12 @@ package id.dimas.kasirpintar.module.registration;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
+import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.EmailHelper;
 import id.dimas.kasirpintar.helper.HashUtils;
@@ -199,7 +201,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void doRegis() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
         String generatedOtp = EmailHelper.generateOTP();
+        Log.d("doRegis", "generatedOtp = " + generatedOtp);
 
         EmailHelper.sendEmail(email, name, generatedOtp);
 
@@ -210,23 +218,28 @@ public class RegisterActivity extends AppCompatActivity {
         users.createdAt = new Date().toString();
 
         new Thread(() -> {
-
             if (isNewOutlet) {
                 Outlets outlets = new Outlets();
                 outlets.setName(actShopName.getText().toString());
                 outlets.setAddress("");
-                long id = appDatabase.outletsDao().upsertOutlets(outlets);
-                users.setOutletId(String.valueOf(id));
+                long newOutletId = appDatabase.outletsDao().upsertOutlets(outlets);
+                users.setOutletId(String.valueOf(newOutletId));
+                users.isAdmin = true;
             } else {
                 users.setOutletId(String.valueOf(outletId));
             }
 
-            appDatabase.usersDao().upsertUsers(users);
+            long newUserId = appDatabase.usersDao().upsertUsers(users);
+            users.setId(String.valueOf(newUserId));
 
             runOnUiThread(() -> {
-                Intent intent = new Intent(mContext, VerificationActivity.class);
-                intent.putExtra("otp", generatedOtp);
-                startActivity(intent);
+                SuccessDialog successDialog = new SuccessDialog(mContext, "Registrasi Berhasil", getString(R.string.check_email), () -> {
+                    Intent intent = new Intent(mContext, VerificationActivity.class);
+                    intent.putExtra("otp", generatedOtp);
+                    intent.putExtra("users", users);
+                    startActivity(intent);
+                });
+                successDialog.show();
             });
         });
     }
@@ -331,23 +344,6 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.double_back), Toast.LENGTH_SHORT).show();
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-        }
-    }
-
-    private static class UsersDbAsync extends AsyncTask<Void, Void, Void> {
-
-        private AppDatabase appDatabase;
-        private Users users;
-
-        public UsersDbAsync(AppDatabase appDatabase, Users users) {
-            this.appDatabase = appDatabase;
-            this.users = users;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            appDatabase.usersDao().upsertUsers(users);
-            return null;
         }
     }
 }
