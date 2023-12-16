@@ -36,9 +36,9 @@ public class VerificationActivity extends AppCompatActivity {
     private CardView cvRetry;
     private ImageView imgLbl;
     private CardView cvCheckVerification;
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
     private AppDatabase appDatabase;
-    private FirebaseUser mUser;
+//    private FirebaseUser mUser;
     private String TAG = "VerificationActivity";
     private Users users;
     private Context mContext;

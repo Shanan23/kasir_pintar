@@ -10,6 +10,8 @@ public class Users {
     @NonNull
     @PrimaryKey
     public String id;
+    @ColumnInfo(name = "outlet_id")
+    public String outletId;
     @ColumnInfo(name = "name")
     public String name;
     @ColumnInfo(name = "email")
@@ -28,6 +30,14 @@ public class Users {
     public String createdAt;
     @ColumnInfo(name = "deleted_at")
     public String deletedAt;
+
+    public String getOutletId() {
+        return outletId;
+    }
+
+    public void setOutletId(String outletId) {
+        this.outletId = outletId;
+    }
 
     @NonNull
     public String getId() {

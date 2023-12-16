@@ -13,6 +13,8 @@ public class Products implements Serializable {
     public int id;
     @ColumnInfo(name = "id_category")
     public String idCategory;
+    @ColumnInfo(name = "id_outlet")
+    public String idOutlet;
     @ColumnInfo(name = "sku")
     public String sku;
     @ColumnInfo(name = "name")

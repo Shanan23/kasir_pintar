@@ -7,40 +7,38 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.component.FailedDialog;
-import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.EmailHelper;
 import id.dimas.kasirpintar.helper.HashUtils;
+import id.dimas.kasirpintar.model.Outlets;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.login.LoginActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+    //    private FirebaseAuth mAuth;
     private String email;
     private String password;
     private String pin;
@@ -51,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView tvLeftTitle;
     private TextView tvRightTitle;
     private TextInputEditText etEmail;
+    private AutoCompleteTextView actShopName;
     private TextInputEditText etName;
     private TextInputEditText etPassword;
     private TextInputEditText etPin;
@@ -62,6 +61,10 @@ public class RegisterActivity extends AppCompatActivity {
     private FailedDialog failedDialog;
     private AppDatabase appDatabase;
     private Users users;
+    ArrayAdapter<String> autoCompleteAdapter;
+    private List<Outlets> outletsList;
+    private boolean isNewOutlet;
+    private int outletId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
         etPin = findViewById(R.id.etPin);
+        actShopName = findViewById(R.id.actShopName);
         cvDaftar = findViewById(R.id.cvChangePassword);
         showPasswordCheckbox = findViewById(R.id.showPasswordCheckbox);
 
@@ -86,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mAuth = FirebaseAuth.getInstance();
+//        mAuth = FirebaseAuth.getInstance();
         appDatabase = MyApp.getAppDatabase();
 
         cvBack.setVisibility(View.INVISIBLE);
@@ -136,92 +140,181 @@ public class RegisterActivity extends AppCompatActivity {
             pin = HashUtils.hashPassword(etPin.getText().toString());
             doRegis();
         });
+
+        setupAutoCompleteTextView();
+
     }
 
-    public void doRegis() {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "createUserWithEmail:success");
+    private void getAllShopNames() {
+        AtomicReference<List<String>> suggestions = new AtomicReference<>(new ArrayList<>());
 
-                    FirebaseUser user = mAuth.getCurrentUser();
+        new Thread(() -> {
+            outletsList = appDatabase.outletsDao().getAllOutlets();
+            List<String> outletName = new ArrayList<>();
+            for (Outlets outlet : outletsList) {
+                outletName.add(outlet.name);
+            }
+            suggestions.set(outletName);
+            // Set up AutoCompleteTextView with suggestions
+            autoCompleteAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_dropdown_item_1line, suggestions.get());
+            runOnUiThread(() -> actShopName.setAdapter(autoCompleteAdapter));
+        }).start();
+    }
 
-                    users = new Users();
-                    users.id = user.getUid();
-                    users.email = email;
-                    users.pin = pin;
-                    users.isActive = user.isEmailVerified();
-                    users.createdAt = new Date().toString();
+    private void setupAutoCompleteTextView() {
+        // Fetch existing shop names from the database
+        getAllShopNames();
 
-                    new UsersDbAsync(appDatabase, users).execute();
+        actShopName.setAdapter(autoCompleteAdapter);
 
-                    if (user != null) {
-                        user.sendEmailVerification().addOnCompleteListener(RegisterActivity.this, task1 -> {
-                            if (task1.isSuccessful()) {
-                                Log.d(TAG, "sendEmailVerification:success");
+        actShopName.setOnItemClickListener((parent, view, position, id) -> {
 
-                                users.isVerificationSend = true;
-                                new UsersDbAsync(appDatabase, users).execute();
+        });
 
-                                doSetName(user);
-                                SuccessDialog successDialog = new SuccessDialog(mContext, "Registrasi Berhasil", getString(R.string.check_email), () -> {
-                                    Intent intent = new Intent(mContext, VerificationActivity.class);
-                                    startActivity(intent);
-                                });
-                                successDialog.show();
-                            } else {
-                                Log.d(TAG, "sendEmailVerification:failed");
+        actShopName.setOnDismissListener(() -> {
+            String enteredText = actShopName.getText().toString().trim();
+            if (enteredText.isEmpty()) {
+                actShopName.setError("Nama Toko tidak boleh kosong");
+                return;
+            }
+            int indexOutlet = getIndexByValue(enteredText);
+            if (indexOutlet == -1) {
+                isNewOutlet = true;
 
-                                users.isVerificationSend = false;
-                                new UsersDbAsync(appDatabase, users).execute();
-
-                                Toast.makeText(mContext, "Failed to send verification email", Toast.LENGTH_SHORT).show();
-
-                                String exceptionMessage = task.getException().getMessage();
-                                if (exceptionMessage != null) {
-                                    if (exceptionMessage.contains("The email address is already in use by another account.")) {
-                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Email sudah digunakan, silakan melakukan login");
-                                    } else {
-                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
-                                    }
-                                } else {
-                                    failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
-                                }
-                                failedDialog.show();
-                            }
-                        });
-                    }
-                } else {
-                    Log.e(TAG, "createUserWithEmail:failure", task.getException());
-                    FailedDialog failedDialog = new FailedDialog(mContext, "Registrasi Gagal", task.getException().getMessage());
-                    failedDialog.show();
-                }
+            } else {
+                isNewOutlet = false;
+                outletId = outletsList.get(indexOutlet).getId();
             }
         });
     }
 
-    public void doSetName(FirebaseUser user) {
-        if (user != null) {
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
-
-            user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-
-                        users.name = user.getDisplayName();
-                        new UsersDbAsync(appDatabase, users).execute();
-
-                    } else {
-                        Exception exception = task.getException();
-                        Log.d(TAG, "sendEmailVerification:failed", exception);
-
-                    }
-                }
-            });
+    private int getIndexByValue(String searchValue) {
+        for (int i = 0; i < outletsList.size(); i++) {
+            if (outletsList.get(i).getName().equals(searchValue)) {
+                return i;
+            }
         }
+        return -1;
     }
+
+    private void doRegis() {
+        String generatedOtp = EmailHelper.generateOTP();
+
+        EmailHelper.sendEmail(email, name, generatedOtp);
+
+        users = new Users();
+        users.email = email;
+        users.pin = pin;
+        users.isActive = false;
+        users.createdAt = new Date().toString();
+
+        new Thread(() -> {
+
+            if (isNewOutlet) {
+                Outlets outlets = new Outlets();
+                outlets.setName(actShopName.getText().toString());
+                outlets.setAddress("");
+                long id = appDatabase.outletsDao().upsertOutlets(outlets);
+                users.setOutletId(String.valueOf(id));
+            } else {
+                users.setOutletId(String.valueOf(outletId));
+            }
+
+            appDatabase.usersDao().upsertUsers(users);
+
+            runOnUiThread(() -> {
+                Intent intent = new Intent(mContext, VerificationActivity.class);
+                intent.putExtra("otp", generatedOtp);
+                startActivity(intent);
+            });
+        });
+    }
+
+//    public void doRegis() {
+//        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                if (task.isSuccessful()) {
+//                    Log.d(TAG, "createUserWithEmail:success");
+//
+//                    FirebaseUser user = mAuth.getCurrentUser();
+//
+//                    users = new Users();
+//                    users.id = user.getUid();
+//                    users.email = email;
+//                    users.pin = pin;
+//                    users.isActive = user.isEmailVerified();
+//                    users.createdAt = new Date().toString();
+//
+//                    new UsersDbAsync(appDatabase, users).execute();
+//
+//                    if (user != null) {
+//                        user.sendEmailVerification().addOnCompleteListener(RegisterActivity.this, task1 -> {
+//                            if (task1.isSuccessful()) {
+//                                Log.d(TAG, "sendEmailVerification:success");
+//
+//                                users.isVerificationSend = true;
+//                                new UsersDbAsync(appDatabase, users).execute();
+//
+//                                doSetName(user);
+//                                SuccessDialog successDialog = new SuccessDialog(mContext, "Registrasi Berhasil", getString(R.string.check_email), () -> {
+//                                    Intent intent = new Intent(mContext, VerificationActivity.class);
+//                                    startActivity(intent);
+//                                });
+//                                successDialog.show();
+//                            } else {
+//                                Log.d(TAG, "sendEmailVerification:failed");
+//
+//                                users.isVerificationSend = false;
+//                                new UsersDbAsync(appDatabase, users).execute();
+//
+//                                Toast.makeText(mContext, "Failed to send verification email", Toast.LENGTH_SHORT).show();
+//
+//                                String exceptionMessage = task.getException().getMessage();
+//                                if (exceptionMessage != null) {
+//                                    if (exceptionMessage.contains("The email address is already in use by another account.")) {
+//                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Email sudah digunakan, silakan melakukan login");
+//                                    } else {
+//                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
+//                                    }
+//                                } else {
+//                                    failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
+//                                }
+//                                failedDialog.show();
+//                            }
+//                        });
+//                    }
+//                } else {
+//                    Log.e(TAG, "createUserWithEmail:failure", task.getException());
+//                    FailedDialog failedDialog = new FailedDialog(mContext, "Registrasi Gagal", task.getException().getMessage());
+//                    failedDialog.show();
+//                }
+//            }
+//        });
+//    }
+//
+//    public void doSetName(FirebaseUser user) {
+//        if (user != null) {
+//            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+//
+//            user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    if (task.isSuccessful()) {
+//
+//                        users.name = user.getDisplayName();
+//                        new UsersDbAsync(appDatabase, users).execute();
+//
+//                    } else {
+//                        Exception exception = task.getException();
+//                        Log.d(TAG, "sendEmailVerification:failed", exception);
+//
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     @Override
     public void onStart() {
