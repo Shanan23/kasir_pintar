@@ -105,4 +105,14 @@ dependencies {
     implementation("com.sun.mail:android-mail:1.6.2")
     implementation("com.sun.mail:android-activation:1.6.2")
     implementation("com.mailgun:mailgun-java:1.1.1")
+
+    implementation("com.squareup.retrofit2:retrofit:2.1.0") {
+        // exclude Retrofit’s OkHttp dependency module and define your own module import
+        exclude("okhttp")
+    }
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
 }

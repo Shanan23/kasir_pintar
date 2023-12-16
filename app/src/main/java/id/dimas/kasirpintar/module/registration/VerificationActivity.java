@@ -119,7 +119,7 @@ public class VerificationActivity extends AppCompatActivity {
         String generatedOtp = EmailHelper.generateOTP();
         Log.d("doSendEmail", "generatedOtp = " + generatedOtp);
 
-        EmailHelper.sendEmail(receivedUser.getEmail(), receivedUser.getName(), generatedOtp);
+        EmailHelper.sendSimpleMessage(receivedUser.getEmail(), receivedUser.getName(), generatedOtp);
     }
 
     private static class UsersDbAsync extends AsyncTask<Void, Void, Users> {

@@ -209,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity {
         String generatedOtp = EmailHelper.generateOTP();
         Log.d("doRegis", "generatedOtp = " + generatedOtp);
 
-        EmailHelper.sendEmail(email, name, generatedOtp);
+        EmailHelper.sendSimpleMessage(email, name, generatedOtp);
 
         users = new Users();
         users.email = email;

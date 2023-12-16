@@ -1,16 +1,23 @@
 package id.dimas.kasirpintar.helper;
 
 
-import com.mailgun.api.v3.MailgunMessagesApi;
-import com.mailgun.client.MailgunClient;
-import com.mailgun.model.message.Message;
-import com.mailgun.model.message.MessageResponse;
+import static java.net.HttpURLConnection.HTTP_OK;
+
+import android.util.Log;
+
+import org.json.JSONObject;
 
 import java.util.Random;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class EmailHelper {
     //APi Key : 95a18cc38ef64db6370aeffb2561ce4c-07f37fca-ca59499c
-    public MessageResponse sendSimpleMessage(String toEmail, String name, String otp) {
+    //sanbox : https://api.mailgun.net/v3/sandbox9098277bd371485db93041d4f7f2f601.mailgun.org/
+    public static void sendSimpleMessage(String toEmail, String name, String otp) {
 
         String subject = "Kode OTP untuk Verifikasi Akun Anda";
         String body = "Dear " + name + ",\n" +
@@ -29,17 +36,29 @@ public class EmailHelper {
                 "\n" +
                 "Kasir Pintar";
 
-        MailgunMessagesApi mailgunMessagesApi = MailgunClient.config(API_KEY)
-                .createApi(MailgunMessagesApi.class);
+        RetrofitClient.getInstance()
+                .getApi()
+                .sendEmail("gaagiigoo23@gmail.com", toEmail, subject, body)
+                .enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == HTTP_OK) {
+                            try {
+                                JSONObject obj = new JSONObject(response.body().string());
+                                Log.d("sendSimpleMessage", obj.getString("message"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("sendSimpleMessage", e.getMessage());
+                            }
+                        }
+                    }
 
-        Message message = Message.builder()
-                .from("Kasir Pintar <gandharyanto@gmail.com>")
-                .to(toEmail)
-                .subject(subject)
-                .text(body)
-                .build();
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("sendSimpleMessage", t.getMessage());
 
-        return mailgunMessagesApi.sendMessage(YOUR_DOMAIN_NAME, message);
+                    }
+                });
     }
 
 //    public static void sendEmail(String toEmail, String name, String otp) {
