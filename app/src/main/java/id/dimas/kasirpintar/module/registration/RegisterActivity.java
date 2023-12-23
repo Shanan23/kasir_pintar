@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +29,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
@@ -35,6 +41,8 @@ import id.dimas.kasirpintar.component.FailedDialog;
 import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.HashUtils;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
+import id.dimas.kasirpintar.model.Outlets;
 import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.login.LoginActivity;
 
@@ -62,6 +70,12 @@ public class RegisterActivity extends AppCompatActivity {
     private FailedDialog failedDialog;
     private AppDatabase appDatabase;
     private Users users;
+    ArrayAdapter<String> autoCompleteAdapter;
+    private List<Outlets> outletsList;
+    private boolean isNewOutlet;
+    private int outletId;
+    private AutoCompleteTextView actShopName;
+    SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         etPin = findViewById(R.id.etPin);
         cvDaftar = findViewById(R.id.cvChangePassword);
         showPasswordCheckbox = findViewById(R.id.showPasswordCheckbox);
+        actShopName = findViewById(R.id.actShopName);
 
         setSupportActionBar(toolbar);
 
@@ -85,9 +100,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        mContext = this;
 
         mAuth = FirebaseAuth.getInstance();
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
         cvBack.setVisibility(View.INVISIBLE);
 
@@ -104,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
 
-        mContext = this;
         tvLeftTitle.setText("Daftar");
         tvRightTitle.setText("Masuk");
         tvRightTitle.setOnClickListener(v -> {
@@ -136,9 +152,87 @@ public class RegisterActivity extends AppCompatActivity {
             pin = HashUtils.hashPassword(etPin.getText().toString());
             doRegis();
         });
+
+        setupShopName();
+
+    }
+
+    private void getAllShopNames() {
+        AtomicReference<List<String>> suggestions = new AtomicReference<>(new ArrayList<>());
+        autoCompleteAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, suggestions.get());
+        actShopName.setAdapter(autoCompleteAdapter);
+        new Thread(() -> {
+            outletsList = appDatabase.outletsDao().getAllOutlets();
+            List<String> outletName = new ArrayList<>();
+            for (Outlets outlet : outletsList) {
+                outletName.add(outlet.getName());
+            }
+            suggestions.set(outletName);
+            // Set up AutoCompleteTextView with suggestions
+
+            runOnUiThread(() -> {
+                autoCompleteAdapter.clear();
+                autoCompleteAdapter.addAll(outletName);
+                autoCompleteAdapter.notifyDataSetChanged();
+            });
+        }).start();
+    }
+
+    private void setupShopName() {
+        // Fetch existing shop names from the database
+        getAllShopNames();
+
+        actShopName.setOnItemClickListener((parent, view, position, id) -> {
+            Log.d(TAG, "Selected shop name: " + autoCompleteAdapter.getItem(position));
+
+        });
+
+        actShopName.setOnDismissListener(() -> {
+            String enteredText = actShopName.getText().toString().trim();
+            if (enteredText.isEmpty()) {
+                actShopName.setError("Nama Toko tidak boleh kosong");
+                return;
+            }
+            int indexOutlet = getIndexByValue(enteredText);
+            if (indexOutlet == -1) {
+                isNewOutlet = true;
+
+            } else {
+                isNewOutlet = false;
+                outletId = outletsList.get(indexOutlet).getId();
+            }
+        });
+    }
+
+    private int getIndexByValue(String searchValue) {
+        for (int i = 0; i < outletsList.size(); i++) {
+            if (outletsList.get(i).getName().equals(searchValue)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void doRegis() {
+        String enteredText = actShopName.getText().toString().trim();
+        if (enteredText.isEmpty()) {
+            actShopName.setError("Nama Toko tidak boleh kosong");
+            return;
+        }
+        int indexOutlet = getIndexByValue(enteredText);
+        if (indexOutlet == -1) {
+            isNewOutlet = true;
+
+        } else {
+            isNewOutlet = false;
+            Outlets outlet = outletsList.get(indexOutlet);
+            outletId = outlet.getId();
+            sharedPreferenceHelper.saveShopId(String.valueOf(outletId));
+            sharedPreferenceHelper.saveShopName(outlet.getName());
+            sharedPreferenceHelper.saveShopAddress(outlet.getAddress());
+        }
+
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -147,14 +241,43 @@ public class RegisterActivity extends AppCompatActivity {
 
                     FirebaseUser user = mAuth.getCurrentUser();
 
+                    Date currentDate = new Date();
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    String formattedDate = dateFormat.format(currentDate);
+
                     users = new Users();
                     users.id = user.getUid();
                     users.email = email;
                     users.pin = pin;
                     users.isActive = user.isEmailVerified();
-                    users.createdAt = new Date().toString();
+                    users.createdAt = formattedDate;
 
-                    new UsersDbAsync(appDatabase, users).execute();
+                    new Thread(() -> {
+
+                        if (isNewOutlet) {
+                            Outlets outlets = new Outlets();
+                            outlets.setName(actShopName.getText().toString());
+                            outlets.setAddress("");
+                            outlets.setCreatedAt(formattedDate);
+                            long newOutletId = appDatabase.outletsDao().upsertOutlets(outlets);
+                            sharedPreferenceHelper.saveShopId(String.valueOf(newOutletId));
+
+                            users.setOutletId(String.valueOf(newOutletId));
+                            users.isAdmin = true;
+                        } else {
+                            users.setOutletId(String.valueOf(outletId));
+                        }
+
+                        long newUserId = appDatabase.usersDao().upsertUsers(users);
+                        users.setId(String.valueOf(newUserId));
+
+                        runOnUiThread(() -> {
+                            Intent intent = new Intent(mContext, VerificationActivity.class);
+                            startActivity(intent);
+                        });
+                    }).start();
+
 
                     if (user != null) {
                         user.sendEmailVerification().addOnCompleteListener(RegisterActivity.this, task1 -> {
@@ -162,7 +285,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 Log.d(TAG, "sendEmailVerification:success");
 
                                 users.isVerificationSend = true;
-                                new UsersDbAsync(appDatabase, users).execute();
+                                new Thread(() -> {
+                                    long newUserId = appDatabase.usersDao().upsertUsers(users);
+                                }).start();
 
                                 doSetName(user);
                                 SuccessDialog successDialog = new SuccessDialog(mContext, "Registrasi Berhasil", getString(R.string.check_email), () -> {
@@ -171,17 +296,19 @@ public class RegisterActivity extends AppCompatActivity {
                                 });
                                 successDialog.show();
                             } else {
-                                Log.d(TAG, "sendEmailVerification:failed");
+                                Log.d(TAG, "sendEmailVerification:failure");
 
                                 users.isVerificationSend = false;
-                                new UsersDbAsync(appDatabase, users).execute();
+                                new Thread(() -> {
+                                    long newUserId = appDatabase.usersDao().upsertUsers(users);
+                                }).start();
 
                                 Toast.makeText(mContext, "Failed to send verification email", Toast.LENGTH_SHORT).show();
 
                                 String exceptionMessage = task.getException().getMessage();
                                 if (exceptionMessage != null) {
                                     if (exceptionMessage.contains("The email address is already in use by another account.")) {
-                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Email sudah digunakan, silakan melakukan login");
+                                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan dengan email Anda, Silakan hubungi admin.");
                                     } else {
                                         failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
                                     }
@@ -194,11 +321,42 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 } else {
                     Log.e(TAG, "createUserWithEmail:failure", task.getException());
-                    FailedDialog failedDialog = new FailedDialog(mContext, "Registrasi Gagal", task.getException().getMessage());
+                    String exceptionMessage = task.getException().getMessage();
+                    if (exceptionMessage != null) {
+                        if (exceptionMessage.contains("The email address is already in use by another account.")) {
+                            failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan dengan email Anda, Silakan hubungi admin.");
+                        } else if (exceptionMessage.contains("The given password is invalid")) {
+                            failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Panjang password minimal 6 karakter");
+                        } else {
+                            failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
+                        }
+                    } else {
+                        failedDialog = new FailedDialog(mContext, "Registrasi Gagal", "Terjadi kesalahan");
+                    }
                     failedDialog.show();
                 }
             }
         });
+    }
+
+    private void createFirebaseUser() {
+
+    }
+
+    private void deleteFirebaseUser(String uid) {
+        mAuth.getCurrentUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            createFirebaseUser();
+                        } else {
+                            Log.e(TAG, "delete User:failure", task.getException());
+                            FailedDialog failedDialog = new FailedDialog(mContext, "Registrasi Gagal", task.getException().getMessage());
+                            failedDialog.show();
+                        }
+                    }
+                });
     }
 
     public void doSetName(FirebaseUser user) {
@@ -209,14 +367,11 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-
                         users.name = user.getDisplayName();
                         new UsersDbAsync(appDatabase, users).execute();
-
                     } else {
                         Exception exception = task.getException();
-                        Log.d(TAG, "sendEmailVerification:failed", exception);
-
+                        Log.d(TAG, "updateProfile:failure", exception);
                     }
                 }
             });

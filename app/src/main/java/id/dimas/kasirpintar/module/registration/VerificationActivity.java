@@ -108,6 +108,8 @@ public class VerificationActivity extends AppCompatActivity {
                             users.setActive(true);
                             users.setEmail(mUser.getEmail());
                             users.setName(mUser.getDisplayName());
+                            sharedPreferenceHelper.saveShopId(users.getOutletId());
+
                             appDatabase.usersDao().upsertUsers(users);
                         }).start();
 
@@ -149,7 +151,7 @@ public class VerificationActivity extends AppCompatActivity {
                         }
                     }).execute();
                 } else {
-                    Log.d(TAG, "sendEmailVerification:failed", task1.getException());
+                    Log.d(TAG, "sendEmailVerification:failure", task1.getException());
 
 //                    users.isVerificationSend = false;
 //                    new UsersDbAsync(appDatabase, users, "upsert", null).execute();

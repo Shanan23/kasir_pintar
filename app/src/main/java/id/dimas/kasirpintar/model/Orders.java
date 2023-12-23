@@ -12,6 +12,8 @@ import java.util.List;
 public class Orders implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
+    @ColumnInfo(name = "id_outlet")
+    public String idOutlet;
     @ColumnInfo(name = "customer_id")
     public String customerId;
     @ColumnInfo(name = "amount")
@@ -140,5 +142,13 @@ public class Orders implements Serializable {
 
     public void setDeletedAt(String deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getIdOutlet() {
+        return idOutlet;
+    }
+
+    public void setIdOutlet(String idOutlet) {
+        this.idOutlet = idOutlet;
     }
 }

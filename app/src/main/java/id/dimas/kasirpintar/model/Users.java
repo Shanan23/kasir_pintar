@@ -5,11 +5,15 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity
-public class Users {
+public class Users implements Serializable {
     @NonNull
     @PrimaryKey
     public String id;
+    @ColumnInfo(name = "outlet_id")
+    public String outletId;
     @ColumnInfo(name = "name")
     public String name;
     @ColumnInfo(name = "email")
@@ -108,5 +112,13 @@ public class Users {
 
     public void setDeletedAt(String deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getOutletId() {
+        return outletId;
+    }
+
+    public void setOutletId(String outletId) {
+        this.outletId = outletId;
     }
 }

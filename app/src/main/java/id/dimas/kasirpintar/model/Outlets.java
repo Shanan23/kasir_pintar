@@ -2,20 +2,18 @@ package id.dimas.kasirpintar.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = "Categories",
-        indices = {@Index(value = {"name"}, unique = true)})
-public class Categories implements Serializable {
+@Entity
+public class Outlets implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
-    @ColumnInfo(name = "id_outlet")
-    public String idOutlet;
     @ColumnInfo(name = "name")
     public String name;
+    @ColumnInfo(name = "address")
+    public String address;
     @ColumnInfo(name = "created_at")
     public String createdAt;
     @ColumnInfo(name = "deleted_at")
@@ -27,14 +25,6 @@ public class Categories implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCreatedAt() {
@@ -53,11 +43,19 @@ public class Categories implements Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public String getIdOutlet() {
-        return idOutlet;
+    public String getName() {
+        return name;
     }
 
-    public void setIdOutlet(String idOutlet) {
-        this.idOutlet = idOutlet;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

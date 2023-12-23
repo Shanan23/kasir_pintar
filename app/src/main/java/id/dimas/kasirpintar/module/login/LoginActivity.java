@@ -162,6 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                                 users = new Users();
                                 users.setAdmin(true);
                             }
+                            sharedPreferenceHelper.saveShopId(users.getOutletId());
+
                             users.setId(user.getUid());
                             users.setActive(true);
                             users.setPin(HashUtils.hashPassword(pin));

@@ -20,6 +20,6 @@ public interface BuyDao {
     @Query("SELECT * FROM Buy")
     List<Buy> getAllBuy();
 
-    @Query("SELECT * FROM Buy WHERE created_at BETWEEN :startDate AND :endDate")
-    List<Buy> getAllBuyFilter(String startDate, String endDate);
+    @Query("SELECT * FROM Buy WHERE id_outlet = :outletId AND created_at BETWEEN :startDate AND :endDate")
+    List<Buy> getAllBuyFilter(String startDate, String endDate, String outletId);
 }

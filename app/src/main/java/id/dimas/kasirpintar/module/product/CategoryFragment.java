@@ -23,6 +23,7 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Categories;
 
 /**
@@ -48,6 +49,7 @@ public class CategoryFragment extends Fragment {
     private ImageButton clearButton;
     private CardView ivAddCategory;
     private AppDatabase appDatabase;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     public CategoryFragment() {
         // Required empty public constructor
@@ -95,6 +97,7 @@ public class CategoryFragment extends Fragment {
 
         // Initialize RecyclerView and adapter
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(requireContext());
 
         categoriesList = new ArrayList<>();
         categoryAdapter = new CategoryAdapter(requireContext(), categoriesList, new CategoryAdapter.OnItemClickListener() {
@@ -180,7 +183,7 @@ public class CategoryFragment extends Fragment {
 
     private void retrieveCategories() {
         new Thread(() -> {
-            List<Categories> allCategories = appDatabase.categoriesDao().getAllCategories();
+            List<Categories> allCategories = appDatabase.categoriesDao().getAllCategoriesById(sharedPreferenceHelper.getShopId());
             List<Categories> activeProduct = new ArrayList<>();
             for (Categories entity : allCategories) {
                 if (entity.getDeletedAt() == null) {

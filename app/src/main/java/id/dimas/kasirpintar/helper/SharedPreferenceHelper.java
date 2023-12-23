@@ -10,6 +10,7 @@ public class SharedPreferenceHelper {
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_IS_SAVED_PIN = "isSavedPin";
     private static final String KEY_IS_SHOW_PROFIT = "isShowProfit";
+    private static final String KEY_SHOP_ID = "idOutlet";
     private static final String KEY_SHOP_NAME = "shopName";
     private static final String KEY_SHOP_ADDRESS = "shopAddress";
 
@@ -17,6 +18,16 @@ public class SharedPreferenceHelper {
 
     public SharedPreferenceHelper(Context context) {
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+    }
+
+    public void saveShopId(String shopId) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SHOP_ID, shopId);
+        editor.apply();
+    }
+
+    public String getShopId() {
+        return sharedPreferences.getString(KEY_SHOP_ID, "");
     }
 
     public void saveShopName(String shopName) {
@@ -78,5 +89,10 @@ public class SharedPreferenceHelper {
 
     public boolean isSavedPin() {
         return sharedPreferences.getBoolean(KEY_IS_SAVED_PIN, false);
+    }
+
+    public void clearAll(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear().apply();
     }
 }

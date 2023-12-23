@@ -22,6 +22,7 @@ import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.ExcelExporter;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Buy;
 import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
@@ -42,6 +43,7 @@ public class ReportsActivity extends AppCompatActivity {
     private CardView cvRBuy;
     private AppDatabase appDatabase;
     private Context mContext;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class ReportsActivity extends AppCompatActivity {
         tvRightTitle.setVisibility(View.GONE);
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
         cvRTrx.setOnClickListener(v -> {
             DatePickerdialog(1);
@@ -128,36 +131,36 @@ public class ReportsActivity extends AppCompatActivity {
 
     private void getBuyReport(String selectedDateRange) {
         new Thread(() -> {
-            List<Buy> reportTrxItems = appDatabase.buyDao().getAllBuyFilter(selectedDateRange.split("-")[0], selectedDateRange.split("-")[1]);
+            List<Buy> reportTrxItems = appDatabase.buyDao().getAllBuyFilter(selectedDateRange.split("-")[0], selectedDateRange.split("-")[1], sharedPreferenceHelper.getShopId());
             runOnUiThread(() -> {
-                ExcelExporter.exportToExcelBuy(mContext, reportTrxItems, String.format("Laporan_Pengeluaran_%s", selectedDateRange));
+                ExcelExporter.exportToExcelBuy(mContext, reportTrxItems, String.format("Laporan_Pengeluaran_%s%s", selectedDateRange, sharedPreferenceHelper.getShopName()));
             });
         }).start();
     }
 
     private void getCategoryReport() {
         new Thread(() -> {
-            List<Categories> categoriesList = appDatabase.categoriesDao().getAllCategories();
+            List<Categories> categoriesList = appDatabase.categoriesDao().getAllCategoriesById(sharedPreferenceHelper.getShopId());
             runOnUiThread(() -> {
-                ExcelExporter.exportToExcelCategories(mContext, categoriesList, String.format("Laporan_Category"));
+                ExcelExporter.exportToExcelCategories(mContext, categoriesList, String.format("Laporan_Category_%s", sharedPreferenceHelper.getShopName()));
             });
         }).start();
     }
 
     private void getTrxItemStock() {
         new Thread(() -> {
-            List<ReportTrxItemStock> reportTrxItemStockList = appDatabase.productsDao().getAllProductsStock();
+            List<ReportTrxItemStock> reportTrxItemStockList = appDatabase.productsDao().getAllProductsStockById(sharedPreferenceHelper.getShopId());
             runOnUiThread(() -> {
-                ExcelExporter.exportToExcelItemStock(mContext, reportTrxItemStockList, String.format("Laporan_Item_Stock"));
+                ExcelExporter.exportToExcelItemStock(mContext, reportTrxItemStockList, String.format("Laporan_Item_Stock_%s", sharedPreferenceHelper.getShopName()));
             });
         }).start();
     }
 
     private void getTrxItem(String selectedDateRange) {
         new Thread(() -> {
-            List<ReportTrxItem> reportTrxItems = appDatabase.ordersDetailDao().getAllItemTrx(selectedDateRange.split("-")[0], selectedDateRange.split("-")[1]);
+            List<ReportTrxItem> reportTrxItems = appDatabase.ordersDetailDao().getAllItemTrx(selectedDateRange.split("-")[0], selectedDateRange.split("-")[1], sharedPreferenceHelper.getShopId());
             runOnUiThread(() -> {
-                ExcelExporter.exportToExcelItemTrx(mContext, reportTrxItems, String.format("Laporan_Item_Quantity_%s", selectedDateRange));
+                ExcelExporter.exportToExcelItemTrx(mContext, reportTrxItems, String.format("Laporan_Item_Quantity_%s%s", selectedDateRange, sharedPreferenceHelper.getShopName()));
 
             });
         }).start();
@@ -165,15 +168,15 @@ public class ReportsActivity extends AppCompatActivity {
 
     private void getTrxByDate(String selectedDateRange) {
         new Thread(() -> {
-            List<Orders> ordersList = appDatabase.ordersDao().getAllOrders();
+            List<Orders> ordersList = appDatabase.ordersDao().getAllOrdersById(sharedPreferenceHelper.getShopId());
             if (ordersList != null) {
                 for (int i = 0; i < ordersList.size(); i++) {
-                    List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailByDate(ordersList.get(i).getId(), selectedDateRange.split("-")[0], selectedDateRange.split("-")[1]);
+                    List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailByDate(ordersList.get(i).getId(), selectedDateRange.split("-")[0], selectedDateRange.split("-")[1], sharedPreferenceHelper.getShopId());
                     ordersList.get(i).setOrdersDetailList(ordersDetailList);
                 }
             }
             runOnUiThread(() -> {
-                ExcelExporter.exportToExcelTrx(mContext, ordersList, String.format("Laporan_Transaksi_%s", selectedDateRange));
+                ExcelExporter.exportToExcelTrx(mContext, ordersList, String.format("Laporan_Transaksi_%s%s", selectedDateRange, sharedPreferenceHelper.getShopName()));
 
             });
         }).start();

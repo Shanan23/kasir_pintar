@@ -11,6 +11,8 @@ import java.io.Serializable;
 public class OrdersDetail implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
+    @ColumnInfo(name = "id_outlet")
+    public String idOutlet;
     @ColumnInfo(name = "order_id")
     public int ordersId;
     @ColumnInfo(name = "item_id")
@@ -119,5 +121,13 @@ public class OrdersDetail implements Serializable {
 
     public void setQty(int qty) {
         this.qty = qty;
+    }
+
+    public String getIdOutlet() {
+        return idOutlet;
+    }
+
+    public void setIdOutlet(String idOutlet) {
+        this.idOutlet = idOutlet;
     }
 }

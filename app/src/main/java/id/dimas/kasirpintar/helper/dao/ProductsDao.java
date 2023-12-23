@@ -16,10 +16,12 @@ public interface ProductsDao {
     long insertProducts(Products products);
     @Upsert
     long upsertProducts(Products products);
-    @Query("SELECT * FROM Products")
-    List<Products> getAllProducts();
+    @Query("SELECT * FROM Products WHERE id_outlet = :shopId")
+    List<Products> getAllProducts(String shopId);
     @Query("SELECT * FROM Products WHERE id = :pId")
     Products getAllProductsById(String pId);
     @Query("SELECT id, name, stock FROM Products")
-    List<ReportTrxItemStock> getAllProductsStock();
+    List<ReportTrxItemStock> getAllProductsStockById();
+    @Query("SELECT id, name, stock FROM Products WHERE id_outlet = :shopId")
+    List<ReportTrxItemStock> getAllProductsStockById(String shopId);
 }

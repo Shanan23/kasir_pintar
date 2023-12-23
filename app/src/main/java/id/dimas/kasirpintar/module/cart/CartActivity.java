@@ -1,25 +1,25 @@
 package id.dimas.kasirpintar.module.cart;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.helper.dao.ProductsDao;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
@@ -44,6 +44,7 @@ public class CartActivity extends AppCompatActivity {
 
     private List<OrdersDetail> ordersDetails;
     private Orders orders;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class CartActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.rvCart);
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
 
         cartList = new ArrayList<>();
         cartAdapter = new CartAdapter(this, cartList, ordersDetailList -> {
@@ -127,7 +129,7 @@ public class CartActivity extends AppCompatActivity {
     private void retrieveProducts() {
         new Thread(() -> {
             ProductsDao productsDao = appDatabase.productsDao();
-            List<Products> productsList = productsDao.getAllProducts();
+            List<Products> productsList = productsDao.getAllProducts(sharedPreferenceHelper.getShopId());
             List<Products> activeProduct = new ArrayList<>();
             for (Products entity : productsList) {
                 if (entity.getDeletedAt() == null) {

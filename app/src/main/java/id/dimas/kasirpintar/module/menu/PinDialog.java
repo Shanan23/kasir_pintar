@@ -1,15 +1,12 @@
 package id.dimas.kasirpintar.module.menu;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
 import androidx.cardview.widget.CardView;
-
-import java.util.Objects;
 
 import id.dimas.kasirpintar.R;
 
@@ -29,13 +26,17 @@ public class PinDialog {
         cvOk.setOnClickListener(v -> {
             String enteredPin = etPin.getText().toString().trim();
             listener.onPinEntered(enteredPin);
-            ((Dialog) Objects.requireNonNull(builder.create())).dismiss();
+            ((AlertDialog) v.getTag()).dismiss();
 
         });
 
-        builder.setView(dialogView)
+        AlertDialog alertDialog = builder.setView(dialogView)
                 .setCancelable(false)
-                .create()
-                .show();
+                .create();
+
+        // Set the tag to the "OK" button so that it can be accessed in the click listener
+        cvOk.setTag(alertDialog);
+
+        alertDialog.show();
     }
 }

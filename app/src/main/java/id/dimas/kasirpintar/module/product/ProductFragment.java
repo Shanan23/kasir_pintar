@@ -2,12 +2,6 @@ package id.dimas.kasirpintar.module.product;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.helper.dao.ProductsDao;
 import id.dimas.kasirpintar.model.Products;
 
@@ -50,6 +50,7 @@ public class ProductFragment extends Fragment {
     private ImageButton clearButton;
     private CardView ivAddProduct;
     private AppDatabase appDatabase;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     public ProductFragment() {
         // Required empty public constructor
@@ -82,6 +83,7 @@ public class ProductFragment extends Fragment {
         // Initialize RecyclerView and adapter
         recyclerViewProduct = view.findViewById(R.id.recyclerViewProduct);
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(requireContext());
 
         productList = new ArrayList<>();
         productAdapter = new ProductAdapter(requireContext(), productList, new ProductAdapter.OnItemClickListener() {
@@ -171,7 +173,7 @@ public class ProductFragment extends Fragment {
     private void retrieveProducts() {
         new Thread(() -> {
             ProductsDao productsDao = appDatabase.productsDao();
-            List<Products> productsList = productsDao.getAllProducts();
+            List<Products> productsList = productsDao.getAllProducts(sharedPreferenceHelper.getShopId());
             List<Products> activeProduct = new ArrayList<>();
             for (Products entity : productsList) {
                 if (entity.getDeletedAt() == null) {

@@ -23,5 +23,6 @@ public interface CategoriesDao {
     @Query("SELECT name FROM Categories")
     List<String> getAllCategoriesName();
 
-
+    @Query("SELECT * FROM Categories WHERE id_outlet = :shopId")
+    List<Categories> getAllCategoriesById(String shopId);
 }

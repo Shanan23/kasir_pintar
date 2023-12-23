@@ -22,6 +22,7 @@ import id.dimas.kasirpintar.helper.HashUtils;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
+import id.dimas.kasirpintar.model.Outlets;
 import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Profit;
 import id.dimas.kasirpintar.model.Users;
@@ -32,6 +33,7 @@ import id.dimas.kasirpintar.module.product.ProductActivity;
 import id.dimas.kasirpintar.module.reports.ReportsActivity;
 import id.dimas.kasirpintar.module.security.SecurityActivity;
 import id.dimas.kasirpintar.module.settings.SettingsActivity;
+import id.dimas.kasirpintar.module.splash.SplashActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -62,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
     private Context mContext;
     private AppDatabase appDatabase;
     private ConstraintLayout profitHome;
+    private Outlets outlet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +100,32 @@ public class HomeActivity extends AppCompatActivity {
         appDatabase = MyApp.getAppDatabase();
         cvBack.setVisibility(View.INVISIBLE);
         tvLeftTitle.setText("KASIR PINTAR");
-        tvRightTitle.setVisibility(View.GONE);
+        tvRightTitle.setText("Logout");
+        tvRightTitle.setOnClickListener(v -> {
+            sharedPreferenceHelper.clearAll();
+            Intent intent = new Intent(mContext, SplashActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
 
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
 
-        contentShopName.setText(sharedPreferenceHelper.getShopName());
-        contentShopAddress.setText(sharedPreferenceHelper.getShopAddress());
+
+        new Thread(() -> {
+            outlet = appDatabase.outletsDao().getAllOutletsById(sharedPreferenceHelper.getShopId());
+            runOnUiThread(() -> {
+                if (outlet != null) {
+                    contentShopName.setText(outlet.getName());
+                    contentShopAddress.setText(outlet.getAddress());
+                } else {
+                    contentShopName.setText("");
+                    contentShopAddress.setText("");
+                }
+            });
+        }).start();
+
 
         if (!sharedPreferenceHelper.isSavedPin()) {
             showDialogPin();
@@ -166,7 +189,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    void getProfit(){
+    void getProfit() {
         new Thread(() -> {
             Profit lastOrder = appDatabase.ordersDao().getAllProfit();
             runOnUiThread(() -> {

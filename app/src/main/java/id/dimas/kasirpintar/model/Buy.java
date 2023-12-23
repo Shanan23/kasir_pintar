@@ -4,10 +4,14 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity
-public class Buy {
+public class Buy implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
+    @ColumnInfo(name = "id_outlet")
+    public String idOutlet;
     @ColumnInfo(name = "name")
     public String name;
     @ColumnInfo(name = "desc")
@@ -65,5 +69,13 @@ public class Buy {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public String getIdOutlet() {
+        return idOutlet;
+    }
+
+    public void setIdOutlet(String idOutlet) {
+        this.idOutlet = idOutlet;
     }
 }

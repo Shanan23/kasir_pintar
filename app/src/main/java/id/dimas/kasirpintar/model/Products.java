@@ -13,6 +13,8 @@ public class Products implements Serializable {
     public int id;
     @ColumnInfo(name = "id_category")
     public String idCategory;
+    @ColumnInfo(name = "id_outlet")
+    public String idOutlet;
     @ColumnInfo(name = "sku")
     public String sku;
     @ColumnInfo(name = "name")
@@ -149,5 +151,13 @@ public class Products implements Serializable {
 
     public void setDeletedAt(String deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getIdOutlet() {
+        return idOutlet;
+    }
+
+    public void setIdOutlet(String idOutlet) {
+        this.idOutlet = idOutlet;
     }
 }

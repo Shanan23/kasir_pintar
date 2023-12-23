@@ -14,8 +14,12 @@ import androidx.cardview.widget.CardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
+import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
+import id.dimas.kasirpintar.model.Outlets;
+import id.dimas.kasirpintar.model.Users;
 import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -35,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Context mContext;
     private SharedPreferenceHelper sharedPreferenceHelper;
     private boolean isProfitChecked;
+    private AppDatabase appDatabase;
+    private Outlets outlet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +66,20 @@ public class SettingsActivity extends AppCompatActivity {
 
         mContext = this;
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
+        appDatabase = MyApp.getAppDatabase();
+        new Thread(() -> {
+            outlet = appDatabase.outletsDao().getAllOutletsById(sharedPreferenceHelper.getShopId());
+            runOnUiThread(() -> {
+                if(outlet!=null) {
+                    etShopName.setText(outlet.getName());
+                    etAddress.setText(outlet.getAddress());
+                }else {
+                    etShopName.setText("");
+                    etAddress.setText("");
+                }
+            });
+        }).start();
 
-        etShopName.setText(sharedPreferenceHelper.getShopName());
-        etAddress.setText(sharedPreferenceHelper.getShopAddress());
         etEmail.setText(sharedPreferenceHelper.getUsername());
         swProfit.setChecked(sharedPreferenceHelper.isShowProfit());
         isProfitChecked = sharedPreferenceHelper.isShowProfit();
@@ -71,6 +88,34 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         ivSaveSetting.setOnClickListener(v -> {
+            if (etShopName.getText().toString().isEmpty()) {
+                etShopName.setError("Nama toko tidak boleh kosong");
+                return;
+            }
+            if (etAddress.getText().toString().isEmpty()) {
+                etAddress.setError("Alamat toko tidak boleh kosong");
+                return;
+            }
+            if (outlet == null) {
+                outlet = new Outlets();
+            }
+
+            outlet.setName(etShopName.getText().toString());
+            outlet.setAddress(etAddress.getText().toString());
+
+            new Thread(() -> {
+                long idOutlet = appDatabase.outletsDao().upsertOutlets(outlet);
+                sharedPreferenceHelper.saveShopId(String.valueOf(idOutlet));
+                Users users = appDatabase.usersDao().getUserByEmail(sharedPreferenceHelper.getUsername());
+                if (users == null) {
+                    users = new Users();
+                    users.setAdmin(true);
+                }
+                users.setOutletId(String.valueOf(idOutlet));
+                users.isAdmin = true;
+                appDatabase.usersDao().upsertUsers(users);
+            }).start();
+
             sharedPreferenceHelper.saveShopName(etShopName.getText().toString());
             sharedPreferenceHelper.saveShopAddress(etAddress.getText().toString());
             sharedPreferenceHelper.setShowProfit(isProfitChecked);
