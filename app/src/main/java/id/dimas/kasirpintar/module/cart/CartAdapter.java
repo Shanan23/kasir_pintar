@@ -19,6 +19,7 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.OrdersDetail;
 import id.dimas.kasirpintar.model.Products;
 
@@ -29,12 +30,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     Context context;
     private List<OrdersDetail> orderDetails;
     private OnItemClickListener listener;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     public CartAdapter(Context context, List<Products> cartList, OnItemClickListener listener) {
         this.cartList = cartList;
         this.context = context;
         this.listener = listener;
         this.filteredList = new ArrayList<>(cartList); // Initialize filteredList with the full list
+        sharedPreferenceHelper = new SharedPreferenceHelper(context);
+
     }
 
 
@@ -129,6 +133,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     cartList.get(position).setQty(updatedQty);
                     currentProduct.setStock(currentStock - 1);
                     new Thread(() -> {
+                        currentProduct.setIdOutlet(sharedPreferenceHelper.getShopId());
                         appDatabase.productsDao().upsertProducts(currentProduct);
                     }).start();
                     existingOrderDetail.setQty(updatedQty);
@@ -147,6 +152,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     currentProduct.setQty(1);
                     currentProduct.setStock(currentStock - 1);
                     new Thread(() -> {
+                        currentProduct.setIdOutlet(sharedPreferenceHelper.getShopId());
                         appDatabase.productsDao().upsertProducts(currentProduct);
                     }).start();
                     cartList.get(position).setStock(currentStock - 1);
@@ -187,6 +193,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 cartList.get(position).setStock(cartList.get(position).getQty() + cartList.get(position).getStock());
                 currentProduct.setStock(cartList.get(position).getQty() + cartList.get(position).getStock());
                 new Thread(() -> {
+                    currentProduct.setIdOutlet(sharedPreferenceHelper.getShopId());
                     appDatabase.productsDao().upsertProducts(currentProduct);
                 }).start();
                 cartList.get(position).setQty(currentQty);

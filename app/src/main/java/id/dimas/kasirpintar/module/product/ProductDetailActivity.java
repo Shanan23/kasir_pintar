@@ -1,12 +1,5 @@
 package id.dimas.kasirpintar.module.product;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,6 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -36,6 +36,7 @@ import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.ImageUtils;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Products;
 
@@ -60,6 +61,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Products products;
     private static final int PICK_IMAGE_REQUEST = 1;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvRightTitle.setVisibility(View.GONE);
 
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
+
         products = new Products();
 
         // Retrieve the 'Products' object from the extras
@@ -131,6 +135,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    categories.setIdOutlet(sharedPreferenceHelper.getShopId());
                     long upsertCategories = appDatabase.categoriesDao().upsertCategories(categories);
                     if (upsertCategories > 0) {
                         Log.d("upsertCategories", "berhasil upsertCategories");
@@ -210,6 +215,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             products.setCreatedAt(formattedDate);
 
             new Thread(() -> {
+                products.setIdOutlet(sharedPreferenceHelper.getShopId());
                 long upsertProduct = appDatabase.productsDao().upsertProducts(products);
                 if (upsertProduct > 0) {
                     Log.d("upsertProduct", "berhasil upsertProduct");

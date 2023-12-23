@@ -108,7 +108,7 @@ public class ProductFragment extends Fragment {
                 String formattedDate = dateFormat.format(currentDate);
 
                 products.setDeletedAt(formattedDate);
-
+products.setIdOutlet(sharedPreferenceHelper.getShopId());
                 new Thread(() -> appDatabase.productsDao().upsertProducts(products)).start();
             }
         });

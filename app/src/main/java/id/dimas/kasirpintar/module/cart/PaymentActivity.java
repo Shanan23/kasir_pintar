@@ -90,6 +90,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         new Thread(() -> {
             receivedOrders.setOrderStatus(MyApp.Status.PENDING.name());
+            receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
             long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
             receivedOrders.setId((int) id);
             if (id > 0) {
@@ -97,6 +98,7 @@ public class PaymentActivity extends AppCompatActivity {
                 for (OrdersDetail ordersDetail : receivedOrdersDetails
                 ) {
                     ordersDetail.ordersId = (int) id;
+                    ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
                     idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
                     ordersDetail.setId((int) idDetail);
                 }
@@ -126,7 +128,7 @@ public class PaymentActivity extends AppCompatActivity {
             receivedOrders.setPayAmount(payAmount);
 
             new Thread(() -> {
-
+                receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
                 long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
                 receivedOrders.setId((int) id);
                 if (id > 0) {
@@ -136,6 +138,7 @@ public class PaymentActivity extends AppCompatActivity {
 
 
                         ordersDetail.ordersId = (int) id;
+                        ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
                         idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
                         ordersDetail.setId((int) idDetail);
                     }

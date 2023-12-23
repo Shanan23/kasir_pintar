@@ -19,6 +19,7 @@ import java.util.Date;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Buy;
 
 public class AddBuyActivity extends AppCompatActivity {
@@ -36,6 +37,7 @@ public class AddBuyActivity extends AppCompatActivity {
     private CardView ivAddBuy;
     private AppDatabase appDatabase;
     private Buy buy;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class AddBuyActivity extends AppCompatActivity {
 
 
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
+
         buy = new Buy();
 
         Intent intent = getIntent();
@@ -98,6 +102,7 @@ public class AddBuyActivity extends AppCompatActivity {
             buy.setCreatedAt(formattedDate);
 
             new Thread(() -> {
+                buy.setIdOutlet(sharedPreferenceHelper.getShopId());
                 long upsertBuy = appDatabase.buyDao().upsertBuy(buy);
                 if (upsertBuy > 0) {
                     Log.d("upsertBuy", "berhasil upsertBuy");

@@ -122,7 +122,7 @@ public class CategoryFragment extends Fragment {
                 String formattedDate = dateFormat.format(currentDate);
 
                 categories.setDeletedAt(formattedDate);
-
+                categories.setIdOutlet(sharedPreferenceHelper.getShopId());
                 new Thread(() -> appDatabase.categoriesDao().upsertCategories(categories)).start();
             }
         });

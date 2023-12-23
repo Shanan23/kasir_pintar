@@ -26,6 +26,7 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
+import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Buy;
 
 public class BuyActivity extends AppCompatActivity {
@@ -44,6 +45,7 @@ public class BuyActivity extends AppCompatActivity {
     List<Buy> buyList;
     BuyAdapter buyAdapter;
     private Context mContext;
+    private SharedPreferenceHelper sharedPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class BuyActivity extends AppCompatActivity {
 
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
 
         cvBack.setOnClickListener(v -> finish());
         tvLeftTitle.setText("Pengeluaran");
@@ -83,7 +86,7 @@ public class BuyActivity extends AppCompatActivity {
                 String formattedDate = dateFormat.format(currentDate);
 
                 buy.setDeletedAt(formattedDate);
-
+buy.setIdOutlet(sharedPreferenceHelper.getShopId());
                 new Thread(() -> appDatabase.buyDao().upsertBuy(buy)).start();
             }
         });
