@@ -20,6 +20,9 @@ public interface UsersDao {
     @Query("SELECT * FROM Users")
     List<Users> getAllUsers();
 
+    @Query("SELECT * FROM Users WHERE outlet_id = :shopId")
+    List<Users> getAllUsersByOutlet(String shopId);
+
     @Query("SELECT * FROM Users WHERE id = :uid LIMIT 1")
     Users getUserById(String uid);
 

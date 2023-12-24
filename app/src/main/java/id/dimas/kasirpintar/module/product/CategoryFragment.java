@@ -90,7 +90,7 @@ public class CategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
         editTextSearch = view.findViewById(R.id.editTextSearch);
-        recyclerViewCategory = view.findViewById(R.id.recyclerViewBuy);
+        recyclerViewCategory = view.findViewById(R.id.recyclerViewUser);
         ivAddCategory = view.findViewById(R.id.ivAddCategory);
         editTextSearch = view.findViewById(R.id.editTextSearch);
         clearButton = view.findViewById(R.id.clearButton);

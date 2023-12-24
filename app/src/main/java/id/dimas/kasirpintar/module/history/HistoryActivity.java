@@ -1,25 +1,21 @@
 package id.dimas.kasirpintar.module.history;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Bundle;
+import com.google.android.material.tabs.TabLayout;
 
 import id.dimas.kasirpintar.R;
-import id.dimas.kasirpintar.module.product.CategoryFragment;
-import id.dimas.kasirpintar.module.product.ProductActivity;
-import id.dimas.kasirpintar.module.product.ProductFragment;
-
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toolbar;
-
-import com.google.android.material.tabs.TabLayout;
 
 public class HistoryActivity extends AppCompatActivity {
 

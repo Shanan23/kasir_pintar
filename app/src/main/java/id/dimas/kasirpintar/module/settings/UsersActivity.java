@@ -1,7 +1,6 @@
-package id.dimas.kasirpintar.module.buy;
+package id.dimas.kasirpintar.module.settings;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,10 +26,9 @@ import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
-import id.dimas.kasirpintar.model.Buy;
+import id.dimas.kasirpintar.model.Users;
 
-public class BuyActivity extends AppCompatActivity {
-
+public class UsersActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CardView cvBack;
     private TextView tvLeftTitle;
@@ -39,18 +37,17 @@ public class BuyActivity extends AppCompatActivity {
     private ImageView searchIcon;
     private EditText editTextSearch;
     private ImageButton clearButton;
-    private RecyclerView recyclerViewBuy;
-    private CardView ivAddBuy;
-    private AppDatabase appDatabase;
-    List<Buy> buyList;
-    BuyAdapter buyAdapter;
+    private RecyclerView recyclerViewUser;
     private Context mContext;
+    private AppDatabase appDatabase;
     private SharedPreferenceHelper sharedPreferenceHelper;
+    private List<Users> userList;
+    private UserAdapter userAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_buy);
+        setContentView(R.layout.activity_users);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         cvBack = (CardView) findViewById(R.id.cvBack);
@@ -60,40 +57,41 @@ public class BuyActivity extends AppCompatActivity {
         searchIcon = (ImageView) findViewById(R.id.searchIcon);
         editTextSearch = (EditText) findViewById(R.id.editTextSearch);
         clearButton = (ImageButton) findViewById(R.id.clearButton);
-        recyclerViewBuy = (RecyclerView) findViewById(R.id.recyclerViewUser);
-        ivAddBuy = (CardView) findViewById(R.id.ivAddCategory);
+        recyclerViewUser = (RecyclerView) findViewById(R.id.recyclerViewUser);
+
 
         mContext = this;
         appDatabase = MyApp.getAppDatabase();
         sharedPreferenceHelper = new SharedPreferenceHelper(this);
 
         cvBack.setOnClickListener(v -> finish());
-        tvLeftTitle.setText("Pengeluaran");
+        tvLeftTitle.setText("Kelola User");
         tvRightTitle.setVisibility(View.GONE);
 
-        buyList = new ArrayList<>();
-        buyAdapter = new BuyAdapter(mContext, buyList, new BuyAdapter.OnItemClickListener() {
+        userList = new ArrayList<>();
+
+        userAdapter = new UserAdapter(mContext, userList, new UserAdapter.OnItemClickListener() {
             @Override
-            public void onEditClick(Buy buy) {
+            public void onEditClick(Users users) {
 
             }
 
             @Override
-            public void onDeleteClick(Buy buy) {
+            public void onDeleteClick(Users users) {
+
                 Date currentDate = new Date();
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String formattedDate = dateFormat.format(currentDate);
 
-                buy.setDeletedAt(formattedDate);
-                buy.setIdOutlet(sharedPreferenceHelper.getShopId());
-                new Thread(() -> appDatabase.buyDao().upsertBuy(buy)).start();
+                users.setActive(false);
+                users.setDeletedAt(formattedDate);
+                new Thread(() -> appDatabase.usersDao().upsertUsers(users)).start();
             }
         });
 
-
-        recyclerViewBuy.setLayoutManager(new LinearLayoutManager(mContext));
-        recyclerViewBuy.setAdapter(buyAdapter);
+        recyclerViewUser.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerViewUser.setAdapter(userAdapter);
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,14 +112,9 @@ public class BuyActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String searchText = editable.toString().trim();
-                filterProducts(searchText);
+                filterList(searchText);
                 updateClearButtonVisibility();
             }
-        });
-
-        ivAddBuy.setOnClickListener(v -> {
-            Intent intent = new Intent(mContext, AddBuyActivity.class);
-            startActivity(intent);
         });
     }
 
@@ -129,35 +122,36 @@ public class BuyActivity extends AppCompatActivity {
         clearButton.setVisibility(editTextSearch.getText().length() > 0 ? View.VISIBLE : View.GONE);
     }
 
-    private void filterProducts(String query) {
+    private void filterList(String query) {
         // Perform filtering logic based on the query
-        List<Buy> filteredList = new ArrayList<>();
+        List<Users> filteredList = new ArrayList<>();
 
-        for (Buy buy : buyList) {
-            if (buy.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(buy);
+        for (Users users : userList) {
+            if (users.getName().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(users);
             }
         }
 
-        buyAdapter.setFilter(filteredList);
+        userAdapter.setFilter(filteredList);
     }
 
-    private void retrieveCategories() {
+
+    private void retrieveUsers() {
         new Thread(() -> {
-            List<Buy> allBuy = appDatabase.buyDao().getAllBuy();
-            List<Buy> activeBuy = new ArrayList<>();
-            for (Buy entity : allBuy) {
+            List<Users> allUsersByOutlet = appDatabase.usersDao().getAllUsersByOutlet(sharedPreferenceHelper.getShopId());
+            List<Users> activeUsers = new ArrayList<>();
+            for (Users entity : allUsersByOutlet) {
                 if (entity.getDeletedAt() == null) {
-                    activeBuy.add(entity);
+                    activeUsers.add(entity);
                 }
             }
 
             // Update the noteList and notify the adapter
-            buyList.clear();
-            buyList.addAll(activeBuy);
+            userList.clear();
+            userList.addAll(activeUsers);
 
             runOnUiThread(() ->
-                    buyAdapter.setFilter(buyList)
+                    userAdapter.setFilter(userList)
             );
         }).start();
     }
@@ -165,7 +159,7 @@ public class BuyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        retrieveCategories();
+        retrieveUsers();
 
     }
 }

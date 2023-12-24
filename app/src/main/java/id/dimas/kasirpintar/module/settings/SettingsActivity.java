@@ -41,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     private boolean isProfitChecked;
     private AppDatabase appDatabase;
     private Outlets outlet;
+    private CardView cvUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
         etEmail = (TextInputEditText) findViewById(R.id.etEmail);
         swProfit = (SwitchCompat) findViewById(R.id.swProfit);
         ivSaveSetting = (CardView) findViewById(R.id.ivSaveSetting);
+        cvUser = (CardView) findViewById(R.id.cvUser);
 
         cvBack.setOnClickListener(v -> finish());
         tvLeftTitle.setText("Pengaturan");
@@ -85,6 +87,11 @@ public class SettingsActivity extends AppCompatActivity {
         isProfitChecked = sharedPreferenceHelper.isShowProfit();
         swProfit.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isProfitChecked = isChecked;
+        });
+
+        cvUser.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UsersActivity.class);
+            startActivity(intent);
         });
 
         ivSaveSetting.setOnClickListener(v -> {

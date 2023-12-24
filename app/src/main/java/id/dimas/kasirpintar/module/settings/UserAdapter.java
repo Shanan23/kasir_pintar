@@ -1,4 +1,4 @@
-package id.dimas.kasirpintar.module.buy;
+package id.dimas.kasirpintar.module.settings;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,32 +14,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.dimas.kasirpintar.R;
-import id.dimas.kasirpintar.model.Buy;
+import id.dimas.kasirpintar.model.Users;
 
-public class BuyAdapter extends RecyclerView.Adapter<BuyAdapter.ViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
-    private List<Buy> buyList;
-    private List<Buy> filteredList; // Add a filtered list
+    private List<Users> usersList;
+    private List<Users> filteredList; // Add a filtered list
     Context context;
     private OnItemClickListener onItemClickListener;
 
-    public BuyAdapter(Context context, List<Buy> buyList, OnItemClickListener listener) {
-        this.buyList = buyList;
+    public UserAdapter(Context context, List<Users> usersList, OnItemClickListener listener) {
+        this.usersList = usersList;
         this.context = context;
         this.onItemClickListener = listener;
-        this.filteredList = new ArrayList<>(buyList); // Initialize filteredList with the full list
+        this.filteredList = new ArrayList<>(usersList); // Initialize filteredList with the full list
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_buy, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
         return new ViewHolder(view, context, onItemClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Buy product = filteredList.get(position);
+        Users product = filteredList.get(position);
         holder.bind(product);
     }
 
@@ -51,55 +51,54 @@ public class BuyAdapter extends RecyclerView.Adapter<BuyAdapter.ViewHolder> {
     // Update the filtered list with the full list
     public void resetFilter() {
         filteredList.clear();
-        filteredList.addAll(buyList);
+        filteredList.addAll(usersList);
         notifyDataSetChanged();
     }
 
     // Set a new filtered list and update the adapter
-    public void setFilter(List<Buy> filteredList) {
+    public void setFilter(List<Users> filteredList) {
         this.filteredList = filteredList;
         notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvItemName;
-        private TextView lblDate;
-        private TextView lblDesc;
-        private TextView contentTotal;
+        private TextView contentName;
+        private TextView contentEmail;
         private ImageView ivDelete;
         private OnItemClickListener itemClickListener;
 
         ViewHolder(@NonNull View itemView, Context context, OnItemClickListener onItemClickListener) {
             super(itemView);
             this.itemClickListener = onItemClickListener;
-            tvItemName = (TextView) itemView.findViewById(R.id.contentName);
-            lblDate = (TextView) itemView.findViewById(R.id.contentEmail);
-            lblDesc = (TextView) itemView.findViewById(R.id.lblDesc);
-            contentTotal = (TextView) itemView.findViewById(R.id.contentTotal);
+            contentName = (TextView) itemView.findViewById(R.id.contentName);
+            contentEmail = (TextView) itemView.findViewById(R.id.contentEmail);
             ivDelete = (ImageView) itemView.findViewById(R.id.ivDelete);
 
         }
 
-        void bind(Buy buy) {
-            tvItemName.setText(buy.getName());
-            lblDate.setText(buy.getCreatedAt());
-            lblDesc.setText(buy.getDesc());
-            contentTotal.setText(String.valueOf(buy.getAmount()));
+        void bind(Users user) {
+            String name = user.getName();
+            if (user.isAdmin()) {
+                name += "(Admin)";
+                ivDelete.setVisibility(View.GONE);
+            }
+
+            contentName.setText(name);
+            contentEmail.setText(user.getEmail());
             ivDelete.setOnClickListener(v -> {
                 if (itemClickListener != null) {
-                    itemClickListener.onDeleteClick(buy);
+                    itemClickListener.onDeleteClick(user);
                 }
             });
-            // Add any other binding logic for categories details
         }
     }
 
 
     public interface OnItemClickListener {
-        void onEditClick(Buy buy);
+        void onEditClick(Users users);
 
-        void onDeleteClick(Buy buy);
+        void onDeleteClick(Users users);
     }
 
 }

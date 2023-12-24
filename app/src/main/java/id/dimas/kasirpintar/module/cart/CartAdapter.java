@@ -64,7 +64,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         public ViewHolder(View itemView, Context context, List<Products> cartList, OnItemClickListener itemClickListener) {
             super(itemView);
-            tvItemName = itemView.findViewById(R.id.tvItemName);
+            tvItemName = itemView.findViewById(R.id.contentName);
             contentCalendar = itemView.findViewById(R.id.contentCalendar);
             contentQty = itemView.findViewById(R.id.contentQty);
             contentTotal = itemView.findViewById(R.id.contentTotal);

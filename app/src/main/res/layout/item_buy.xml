@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvItemName"
+            android:id="@+id/contentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -41,10 +41,10 @@
             android:background="@color/md_theme_dark_primary"
             app:layout_constraintEnd_toStartOf="@id/ivDelete"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvItemName" />
+            app:layout_constraintTop_toBottomOf="@id/contentName" />
 
         <TextView
-            android:id="@+id/lblDate"
+            android:id="@+id/contentEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -61,7 +61,7 @@
             app:layout_constraintBottom_toTopOf="@id/contentTotal"
             app:layout_constraintEnd_toStartOf="@id/ivDelete"
             app:layout_constraintStart_toEndOf="@id/v1"
-            app:layout_constraintTop_toBottomOf="@id/lblDate">
+            app:layout_constraintTop_toBottomOf="@id/contentEmail">
 
             <TextView
                 android:id="@+id/lblDesc"

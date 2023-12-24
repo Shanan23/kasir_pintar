@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvItemName"
+            android:id="@+id/contentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -39,7 +39,7 @@
             android:layout_height="1dp"
             android:background="@color/md_theme_dark_primary"
             app:layout_constraintStart_toEndOf="@id/v1"
-            app:layout_constraintTop_toBottomOf="@id/tvItemName" />
+            app:layout_constraintTop_toBottomOf="@id/contentName" />
 
         <ImageView
             android:id="@+id/lblCalendar"

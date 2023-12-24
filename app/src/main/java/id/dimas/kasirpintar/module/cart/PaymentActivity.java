@@ -18,13 +18,10 @@ import java.util.List;
 
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
-import id.dimas.kasirpintar.component.FailedDialog;
-import id.dimas.kasirpintar.component.SuccessDialog;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.helper.SharedPreferenceHelper;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.OrdersDetail;
-import id.dimas.kasirpintar.module.menu.HomeActivity;
 
 public class PaymentActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -126,48 +123,48 @@ public class PaymentActivity extends AppCompatActivity {
             String paidDate = dateFormat.format(currentDate);
             receivedOrders.setPaidAt(paidDate);
             receivedOrders.setPayAmount(payAmount);
-
+            receivedOrders.setOrdersDetailList(receivedOrdersDetails);
             new Thread(() -> {
                 receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
-                long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
+                long id = appDatabase.ordersDao().insertOrders(receivedOrders);
                 receivedOrders.setId((int) id);
-                if (id > 0) {
-                    long idDetail = 0;
-                    for (OrdersDetail ordersDetail : receivedOrdersDetails
-                    ) {
-
-
-                        ordersDetail.ordersId = (int) id;
-                        ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
-                        idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
-                        ordersDetail.setId((int) idDetail);
-                    }
-
-                    if (idDetail > 0) {
-                        runOnUiThread(() -> {
-                            SuccessDialog successDialog = new SuccessDialog(mContext, "Transaksi Berhasil", String.format("Total : %s, Profit : %s", receivedOrders.getAmount(), receivedOrders.getProfit()), () -> {
-                                Intent intent = new Intent(this, HomeActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            });
-
-                            successDialog.show();
-
-                        });
-                    }
-
-                    runOnUiThread(() -> {
-                        MyApp.getPrintHelper().printBluetooth(mContext, receivedOrders, receivedOrdersDetails);
-                    });
-
-                } else {
-                    runOnUiThread(() -> {
-                        FailedDialog failedDialog = new FailedDialog(mContext, "Transaksi Gagal", "Gagal menyimpan transaksi");
-                        failedDialog.show();
-                    });
+//                if (id > 0) {
+                long idDetail = 0;
+                for (OrdersDetail ordersDetail : receivedOrdersDetails
+                ) {
+                    ordersDetail.ordersId = (int) id;
+                    ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
+                    idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
+                    ordersDetail.setId((int) idDetail);
                 }
+
+//                    if (idDetail > 0) {
+                runOnUiThread(() -> {
+//                            SuccessDialog successDialog = new SuccessDialog(mContext, "Transaksi Berhasil", String.format("Total : %s, Profit : %s", receivedOrders.getAmount(), receivedOrders.getProfit()), () -> {
+                    Intent intent = new Intent(this, SuccessActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("total", receivedOrders.getAmount());
+                    intent.putExtra("profit", receivedOrders.getProfit());
+                    startActivity(intent);
+//                            });
+
+//                            successDialog.show();
+
+                });
+//                    }
+
+                runOnUiThread(() -> {
+                    MyApp.getPrintHelper().printBluetooth(mContext, receivedOrders, receivedOrdersDetails);
+                });
+
+//                } else {
+//                    runOnUiThread(() -> {
+//                        FailedDialog failedDialog = new FailedDialog(mContext, "Transaksi Gagal", "Gagal menyimpan transaksi");
+//                        failedDialog.show();
+//                    });
+//                }
             }).start();
         });
     }

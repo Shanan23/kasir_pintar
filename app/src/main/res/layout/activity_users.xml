@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_light_background">
+    android:background="@color/md_theme_light_background"
+    tools:context=".module.settings.UsersActivity">
+
+    <include
+        android:id="@+id/actionBarCustom"
+        layout="@layout/actionbar_custom"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <LinearLayout
         android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_margin="8dp"
         android:background="@color/md_theme_light_background"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/actionBarCustom">
 
         <ImageView
             android:id="@+id/searchIcon"
@@ -28,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:hint="Cari Kategori"
+            android:hint="Cari User"
             android:lines="1"
             android:paddingStart="8dp"
             android:textColor="@android:color/black"
@@ -49,26 +57,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUser"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/ivAddCategory"
-        android:layout_below="@id/searchLayout" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchLayout" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/ivAddCategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        app:cardBackgroundColor="@color/md_theme_dark_primary"
-        app:cardCornerRadius="5dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/md_theme_dark_primary"
-            android:gravity="center"
-            android:text="Tambah Kategori"
-            android:textColor="@color/md_theme_light_onSecondary" />
-    </androidx.cardview.widget.CardView>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

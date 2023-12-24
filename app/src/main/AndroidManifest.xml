@@ -18,11 +18,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".module.cart.SuccessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".module.settings.UsersActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="android.app.splash_screen_drawable"
             android:resource="@drawable/ic_logo" />
-
         <meta-data
             android:name="android.app.splash_screen_sticky"
             android:value="true" />

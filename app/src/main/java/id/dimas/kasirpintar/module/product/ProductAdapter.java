@@ -78,7 +78,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         ViewHolder(@NonNull View itemView, Context context, OnItemClickListener listener) {
             super(itemView);
-            productNameTextView = itemView.findViewById(R.id.tvItemName);
+            productNameTextView = itemView.findViewById(R.id.contentName);
             contentQty = itemView.findViewById(R.id.contentQty);
             contentTotal = itemView.findViewById(R.id.contentTotal);
             ivProduct = itemView.findViewById(R.id.ivProduct);

@@ -248,6 +248,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     users = new Users();
                     users.id = user.getUid();
+                    users.name = name;
                     users.email = email;
                     users.pin = pin;
                     users.isActive = user.isEmailVerified();
@@ -366,13 +367,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        users.name = user.getDisplayName();
-                        new UsersDbAsync(appDatabase, users).execute();
-                    } else {
-                        Exception exception = task.getException();
-                        Log.d(TAG, "updateProfile:failure", exception);
-                    }
+                    
                 }
             });
         }

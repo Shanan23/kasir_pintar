@@ -65,7 +65,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             this.itemClickListener = onItemClickListener;
 
             v1 = itemView.findViewById(R.id.v1);
-            tvItemName = itemView.findViewById(R.id.tvItemName);
+            tvItemName = itemView.findViewById(R.id.contentName);
             v2 = itemView.findViewById(R.id.v2);
             lblCalendar = itemView.findViewById(R.id.lblCalendar);
             contentCalendar = itemView.findViewById(R.id.contentCalendar);

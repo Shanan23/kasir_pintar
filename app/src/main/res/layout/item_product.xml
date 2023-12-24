@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvItemName"
+            android:id="@+id/contentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -52,7 +52,7 @@
             android:textColor="@color/md_theme_dark_primary"
             app:layout_constraintBottom_toTopOf="@id/contentTotal"
             app:layout_constraintStart_toEndOf="@id/v1"
-            app:layout_constraintTop_toBottomOf="@id/tvItemName" />
+            app:layout_constraintTop_toBottomOf="@id/contentName" />
 
         <TextView
             android:id="@+id/contentQty"
@@ -63,7 +63,7 @@
             android:textColor="@color/md_theme_dark_primary"
             app:layout_constraintBottom_toTopOf="@id/contentTotal"
             app:layout_constraintStart_toEndOf="@id/lblQty"
-            app:layout_constraintTop_toBottomOf="@id/tvItemName" />
+            app:layout_constraintTop_toBottomOf="@id/contentName" />
 
         <TextView
             android:id="@+id/contentTotal"
