@@ -3,6 +3,7 @@ package id.dimas.kasirpintar.module.cart;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -89,6 +90,7 @@ public class PaymentActivity extends AppCompatActivity {
             receivedOrders.setOrderStatus(MyApp.Status.PENDING.name());
             receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
             long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
+            Log.d("Orders.id", String.valueOf(id));
             receivedOrders.setId((int) id);
             if (id > 0) {
                 long idDetail = 0;
@@ -126,7 +128,7 @@ public class PaymentActivity extends AppCompatActivity {
             receivedOrders.setOrdersDetailList(receivedOrdersDetails);
             new Thread(() -> {
                 receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
-                long id = appDatabase.ordersDao().insertOrders(receivedOrders);
+                long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
                 receivedOrders.setId((int) id);
 //                if (id > 0) {
                 long idDetail = 0;
