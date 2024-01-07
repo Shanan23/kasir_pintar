@@ -8,12 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import id.dimas.kasirpintar.R;
-import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
@@ -48,6 +48,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        private final ConstraintLayout clHistory;
         private OnItemClickListener itemClickListener;
         private View v1;
         private TextView tvItemName;
@@ -64,6 +65,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             super(itemView);
             this.itemClickListener = onItemClickListener;
 
+            clHistory = itemView.findViewById(R.id.clHistory);
             v1 = itemView.findViewById(R.id.v1);
             tvItemName = itemView.findViewById(R.id.contentName);
             v2 = itemView.findViewById(R.id.v2);
@@ -81,14 +83,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             contentCalendar.setText(orders.getOrderDate());
             contentQty.setText(String.valueOf(orders.getProfitItem().getTotalItem()));
             contentTotal.setText(String.valueOf(orders.getAmount()));
+
+
+            clHistory.setOnClickListener(v -> {
+                itemClickListener.onEditClick(orders);
+            });
         }
     }
 
 
     public interface OnItemClickListener {
-        void onEditClick(Categories categories);
+        void onEditClick(Orders orders);
 
-        void onDeleteClick(Categories categories);
+        void onDeleteClick(Orders orders);
     }
 
 }

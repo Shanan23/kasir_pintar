@@ -1,5 +1,6 @@
 package id.dimas.kasirpintar.module.history;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,11 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
-import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.OrdersDetail;
+import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Profit;
+import id.dimas.kasirpintar.module.cart.PaymentActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,12 +84,26 @@ public class HistoryNotPaymentFragment extends Fragment {
         orderList = new ArrayList<>();
         historyAdapter = new HistoryAdapter(requireContext(), orderList, new HistoryAdapter.OnItemClickListener() {
             @Override
-            public void onEditClick(Categories categories) {
+            public void onEditClick(Orders orders) {
 
+                Orders lastOrder = orders;
+                List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailById(lastOrder.getId());
+                for (int i = 0; i < ordersDetailList.size(); i++) {
+                    Products products = appDatabase.productsDao().getAllProductsById(ordersDetailList.get(i).getItemId());
+                    ordersDetailList.get(i).setProducts(products);
+                }
+                lastOrder.setOrdersDetailList(ordersDetailList);
+
+                Intent intent = new Intent(requireActivity(), PaymentActivity.class);
+
+                intent.putExtra("ordersDetails", new ArrayList<>(ordersDetailList)); // ArrayList implements Serializable
+                intent.putExtra("orders", lastOrder);
+
+                startActivity(intent);
             }
 
             @Override
-            public void onDeleteClick(Categories categories) {
+            public void onDeleteClick(Orders orders) {
 
             }
         });
@@ -98,8 +115,8 @@ public class HistoryNotPaymentFragment extends Fragment {
     private void retrieveOrders() {
         new Thread(() -> {
             List<Orders> allOrdersByStatus = appDatabase.ordersDao().getAllOrdersByStatus(MyApp.Status.PENDING.name());
-
             List<Orders> activeOrders = new ArrayList<>();
+
             for (Orders entity : allOrdersByStatus) {
                 if (entity.getId() != -1) {
                     Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());

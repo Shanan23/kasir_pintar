@@ -15,7 +15,6 @@ import java.util.List;
 import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
-import id.dimas.kasirpintar.model.Categories;
 import id.dimas.kasirpintar.model.Orders;
 import id.dimas.kasirpintar.model.Profit;
 
@@ -82,12 +81,12 @@ public class HistoryFinishFragment extends Fragment {
         orderList = new ArrayList<>();
         historyAdapter = new HistoryAdapter(requireContext(), orderList, new HistoryAdapter.OnItemClickListener() {
             @Override
-            public void onEditClick(Categories categories) {
+            public void onEditClick(Orders orders) {
 
             }
 
             @Override
-            public void onDeleteClick(Categories categories) {
+            public void onDeleteClick(Orders orders) {
 
             }
         });
