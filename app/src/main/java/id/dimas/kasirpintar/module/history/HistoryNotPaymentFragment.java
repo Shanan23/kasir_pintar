@@ -85,21 +85,26 @@ public class HistoryNotPaymentFragment extends Fragment {
         historyAdapter = new HistoryAdapter(requireContext(), orderList, new HistoryAdapter.OnItemClickListener() {
             @Override
             public void onEditClick(Orders orders) {
+                new Thread(() -> {
+                    Orders lastOrder = orders;
+                    List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailById(lastOrder.getId());
+                    for (int i = 0; i < ordersDetailList.size(); i++) {
+                        Products products = appDatabase.productsDao().getAllProductsById(ordersDetailList.get(i).getItemId());
+                        ordersDetailList.get(i).setProducts(products);
+                    }
+                    lastOrder.setOrdersDetailList(ordersDetailList);
 
-                Orders lastOrder = orders;
-                List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailById(lastOrder.getId());
-                for (int i = 0; i < ordersDetailList.size(); i++) {
-                    Products products = appDatabase.productsDao().getAllProductsById(ordersDetailList.get(i).getItemId());
-                    ordersDetailList.get(i).setProducts(products);
-                }
-                lastOrder.setOrdersDetailList(ordersDetailList);
 
-                Intent intent = new Intent(requireActivity(), PaymentActivity.class);
+                    requireActivity().runOnUiThread(()->{
+                        Intent intent = new Intent(requireActivity(), PaymentActivity.class);
 
-                intent.putExtra("ordersDetails", new ArrayList<>(ordersDetailList)); // ArrayList implements Serializable
-                intent.putExtra("orders", lastOrder);
+                        intent.putExtra("ordersDetails", new ArrayList<>(ordersDetailList)); // ArrayList implements Serializable
+                        intent.putExtra("orders", lastOrder);
 
-                startActivity(intent);
+                        startActivity(intent);
+                    });
+
+                }).start();
             }
 
             @Override

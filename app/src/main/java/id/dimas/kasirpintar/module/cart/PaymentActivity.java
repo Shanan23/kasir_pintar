@@ -91,16 +91,17 @@ public class PaymentActivity extends AppCompatActivity {
             receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
             long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
             Log.d("Orders.id", String.valueOf(id));
-            receivedOrders.setId((int) id);
             if (id > 0) {
-                long idDetail = 0;
-                for (OrdersDetail ordersDetail : receivedOrdersDetails
-                ) {
-                    ordersDetail.ordersId = (int) id;
-                    ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
-                    idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
-                    ordersDetail.setId((int) idDetail);
-                }
+                receivedOrders.setId((int) id);
+            }
+
+            long idDetail = 0;
+            for (OrdersDetail ordersDetail : receivedOrdersDetails
+            ) {
+                ordersDetail.ordersId = receivedOrders.getId();
+                ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
+                idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
+                ordersDetail.setId((int) idDetail);
             }
         }).start();
 
@@ -128,13 +129,13 @@ public class PaymentActivity extends AppCompatActivity {
             receivedOrders.setOrdersDetailList(receivedOrdersDetails);
             new Thread(() -> {
                 receivedOrders.setIdOutlet(sharedPreferenceHelper.getShopId());
-                long id = appDatabase.ordersDao().upsertOrders(receivedOrders);
-                receivedOrders.setId((int) id);
+                appDatabase.ordersDao().upsertOrders(receivedOrders);
+//                receivedOrders.setId((int) id);
 //                if (id > 0) {
                 long idDetail = 0;
                 for (OrdersDetail ordersDetail : receivedOrdersDetails
                 ) {
-                    ordersDetail.ordersId = (int) id;
+//                    ordersDetail.ordersId = (int) id;
                     ordersDetail.setIdOutlet(sharedPreferenceHelper.getShopId());
                     idDetail = appDatabase.ordersDetailDao().upsertOrdersDetail(ordersDetail);
                     ordersDetail.setId((int) idDetail);
