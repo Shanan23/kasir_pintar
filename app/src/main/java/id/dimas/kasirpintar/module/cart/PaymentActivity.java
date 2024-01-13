@@ -82,8 +82,15 @@ public class PaymentActivity extends AppCompatActivity {
         Orders receivedOrders = (Orders) intentExtra.getSerializableExtra("orders");
 
         if (receivedOrders != null) {
-            contentTotal.setText(String.valueOf(receivedOrders.amount));
+            contentTotal.setText(String.valueOf(receivedOrders.different));
             contentTrxDate.setText(formattedDate);
+
+            if (receivedOrders.getCustomerId() != null) {
+                if (!receivedOrders.getCustomerId().equalsIgnoreCase("")) {
+                    etCustomerName.setText(receivedOrders.getCustomerId());
+                    etCustomerName.setEnabled(false);
+                }
+            }
         }
 
         new Thread(() -> {
@@ -115,11 +122,11 @@ public class PaymentActivity extends AppCompatActivity {
 
             int payAmount = Integer.parseInt(etTotalBayar.getText().toString());
 
-            if (payAmount >= receivedOrders.getAmount()) {
-                receivedOrders.setDifferent(payAmount - receivedOrders.getAmount());
+            if (payAmount >= receivedOrders.getDifferent()) {
+                receivedOrders.setDifferent(payAmount - receivedOrders.getDifferent());
                 receivedOrders.setOrderStatus(MyApp.Status.COMPLETED.name());
             } else {
-                receivedOrders.setDifferent(receivedOrders.getAmount() - payAmount);
+                receivedOrders.setDifferent(receivedOrders.getDifferent() - payAmount);
                 receivedOrders.setOrderStatus(MyApp.Status.PROCESSING.name());
             }
 

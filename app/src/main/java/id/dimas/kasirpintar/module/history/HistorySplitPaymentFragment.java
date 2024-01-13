@@ -1,5 +1,6 @@
 package id.dimas.kasirpintar.module.history;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,10 @@ import id.dimas.kasirpintar.MyApp;
 import id.dimas.kasirpintar.R;
 import id.dimas.kasirpintar.helper.AppDatabase;
 import id.dimas.kasirpintar.model.Orders;
+import id.dimas.kasirpintar.model.OrdersDetail;
+import id.dimas.kasirpintar.model.Products;
 import id.dimas.kasirpintar.model.Profit;
+import id.dimas.kasirpintar.module.cart.PaymentActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +86,25 @@ public class HistorySplitPaymentFragment extends Fragment {
         historyAdapter = new HistoryAdapter(requireContext(), orderList, new HistoryAdapter.OnItemClickListener() {
             @Override
             public void onEditClick(Orders orders) {
+                new Thread(() -> {
+                    Orders lastOrder = orders;
+                    List<OrdersDetail> ordersDetailList = appDatabase.ordersDetailDao().getAllOrdersDetailById(lastOrder.getId());
+                    for (int i = 0; i < ordersDetailList.size(); i++) {
+                        Products products = appDatabase.productsDao().getAllProductsById(ordersDetailList.get(i).getItemId());
+                        ordersDetailList.get(i).setProducts(products);
+                    }
+                    lastOrder.setOrdersDetailList(ordersDetailList);
 
+                    requireActivity().runOnUiThread(()->{
+                        Intent intent = new Intent(requireActivity(), PaymentActivity.class);
+
+                        intent.putExtra("ordersDetails", new ArrayList<>(ordersDetailList)); // ArrayList implements Serializable
+                        intent.putExtra("orders", lastOrder);
+
+                        startActivity(intent);
+                    });
+
+                }).start();
             }
 
             @Override

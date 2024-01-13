@@ -94,6 +94,7 @@ public class CartActivity extends AppCompatActivity {
 
                 orders = new Orders();
                 orders.amount = finalTotalPrice;
+                orders.different = finalTotalPrice;
                 orders.profit = finalTotalProfit;
                 orders.orderStatus = MyApp.Status.PENDING.name();
             });

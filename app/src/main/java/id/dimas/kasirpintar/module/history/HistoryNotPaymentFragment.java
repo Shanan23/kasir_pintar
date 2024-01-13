@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,9 +127,28 @@ public class HistoryNotPaymentFragment extends Fragment {
 
             for (Orders entity : allOrdersByStatus) {
                 if (entity.getId() != -1) {
-                    Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());
-                    entity.setProfitItem(profit);
-                    activeOrders.add(entity);
+                    if (entity.getId() != -1) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+                        try {
+                            // Parse the input string to LocalDateTime
+                            LocalDateTime dateTime = LocalDateTime.parse(entity.orderDate, formatter);
+
+                            // Calculate the duration in hours
+                            long hours = ChronoUnit.HOURS.between(dateTime, LocalDateTime.now());
+
+                            // Validate if the duration is greater than 24 hours
+                            if (hours < 24) {
+                                Profit profit = appDatabase.ordersDetailDao().getAllOrdersDetailItem(entity.getId());
+                                entity.setProfitItem(profit);
+                                activeOrders.add(entity);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy HH:mm format.");
+                        }
+
+
+                    }
                 }
             }
 
